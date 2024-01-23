@@ -1,0 +1,66 @@
+
+
+//Catches unclosed string caused by nextline escape sequence
+STRING: DOUBLE_QUOTE (~["]| LEGAL_ESCAPE_SEQUENCES | DOUBLE_QUOTE_NOTATION )* DOUBLE_QUOTE 	
+{
+	#Remove double quote from two ends
+	self.text=self.text[1:-1]
+	#print("this is self.text: "+repr(self.text))
+	# Find if there is any nextline escpace sequence in raw string
+	tmp = repr(self.text).find("\\r\\n") 
+	#tmp = repr(self.text).find("\\n") 
+
+
+	if(tmp!=-1): #nextline escapce sequence found
+		#print('Next line escape sequences found: '+repr(self.text))
+
+		#Pick the "Unclosed string" part. 
+		#Then change from raw string to normal string 
+		self.text = repr(self.text)[1:tmp].replace('\\\\','\\')
+
+		raise UncloseString((self.text))
+
+	print('this is self.text: '+ repr(self.text))
+}
+;
+fragment DOUBLE_QUOTE: '"';
+fragment LEGAL_ESCAPE_SEQUENCES:
+	'\b'
+	|
+	'\f'
+	|
+	'\r'
+	|
+	'\n'
+	|
+	'\t'
+	|
+	'\\\''
+	|
+	'\\\\'
+;
+fragment DOUBLE_QUOTE_NOTATION: '\'"';
+
+// Catches unclosed string caused by end of file
+UNCLOSE_STRING: DOUBLE_QUOTE (~["] | '<EOF>')* {
+	#Remove double quote from the begining of string	
+	self.text = self.text[1:]
+
+	#print('this string matches unclosed string because EOF: '+repr(self.text))
+
+	#Find if there is a nextline escape sequence that also causes unclosed string
+	#If there is one, throw that error out first
+	tmp = repr(self.text).find('\\r\\n')
+	if(tmp!=-1):
+
+		#Pick the "Unclosed string" part. 
+		#Then change from raw string to normal string 
+		self.text = repr(self.text)[1:tmp].replace('\\\\','\\')
+
+		raise UncloseString(self.text)
+		
+		return
+	
+	#This string is unclosed purely because of end of file
+	raise UncloseString(self.text)
+};
