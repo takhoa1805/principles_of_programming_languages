@@ -1,4 +1,4 @@
-# Generated from c://Users//takho//Desktop//initial//src//main//zcode//parser//ZCode.g4 by ANTLR 4.13.1
+# Generated from c://Users//takho//Desktop//principles_of_programming_languages//initial//src//main//zcode//parser//ZCode.g4 by ANTLR 4.13.1
 from antlr4 import *
 if "." in __name__:
     from .ZCodeParser import ZCodeParser

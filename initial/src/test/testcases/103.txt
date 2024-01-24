@@ -1,1 +1,16 @@
-aAsVN3
+
+dynamic break
+*	<
+( + , elif end number	for
+until	return elif	by	dynamic	
+	!=	% return	, <=
+) else else >=
+not	number by	string 
+ func	break	if and until - elif ) (	- % 
+ true
+> not / not	return	=	<	]	continue var [	by false "abcd"	begin
+false return	< begin elif	false	!= ( false , var
+== true break != else <=	...	+	( var	begin + -	true != % not	*	func	string a1	continue
+true	[	/	else	"abcd"	bool 
+
+    

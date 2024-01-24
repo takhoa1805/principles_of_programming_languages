@@ -118,19 +118,19 @@ NUMBER: DIGIT+ ('.' DIGIT*)? EXPONENT? | DIGIT+ EXPONENT ;
 fragment DIGIT: [0-9];
 fragment EXPONENT: [eE][+-]? DIGIT+;
 
-
-STRING: DOUBLE_QUOTE ((~[\n]|DOUBLE_QUOTE_NOTATION|LEGAL_ESCAPE_SEQUENCE)*LEGAL_ESCAPE_SEQUENCE*) DOUBLE_QUOTE
+//STRING_LIT: '"' (~[\r\n\f\\'"] | '\\' [bfrnt\\'] | '\'"')* '"' {self.text = self.text[1:-1];};
+STRING: DOUBLE_QUOTE (~[\n\r"\\'] |LEGAL_ESCAPE_SEQUENCE | DOUBLE_QUOTE_NOTATION)* DOUBLE_QUOTE
 {
 	self.text = self.text[1:-1]
-	print("this is a string: "+self.text)
+	#print("this is a string: "+self.text)
 };
 fragment DOUBLE_QUOTE: '"';
 fragment DOUBLE_QUOTE_NOTATION: '\'"';
-fragment LEGAL_ESCAPE_SEQUENCE: '\\\\'[bfrnt'\\];
+fragment LEGAL_ESCAPE_SEQUENCE: '\\'[bfrnt'\\];
 fragment ILLEGAL_ESCAPE_SEQUENCE: '\\''\\'~[bfrnt'\\];
 
 
-UNCLOSE_STRING: DOUBLE_QUOTE ((~["]|DOUBLE_QUOTE_NOTATION|LEGAL_ESCAPE_SEQUENCE)*([\n]| EOF))
+UNCLOSE_STRING: DOUBLE_QUOTE ((~["\\']|DOUBLE_QUOTE_NOTATION|LEGAL_ESCAPE_SEQUENCE)*([\n\r]| EOF))
 {
 	self.text = self.text[1:]
 	print("this is an unclosed string: "+repr(self.text))
@@ -157,7 +157,7 @@ UNCLOSE_STRING: DOUBLE_QUOTE ((~["]|DOUBLE_QUOTE_NOTATION|LEGAL_ESCAPE_SEQUENCE)
 	raise UncloseString(self.text)
 };
 
-ILLEGAL_ESCAPE:  DOUBLE_QUOTE (((~[\n]|DOUBLE_QUOTE_NOTATION)*LEGAL_ESCAPE_SEQUENCE*)(ILLEGAL_ESCAPE_SEQUENCE))
+ILLEGAL_ESCAPE:  DOUBLE_QUOTE ((~["\n\r]|DOUBLE_QUOTE_NOTATION|LEGAL_ESCAPE_SEQUENCE)*('\\'~[bfrnt'\\] | [']~["]))
 {
 	self.text = self.text[1:]
 	print("this is illegal escape: "+self.text)

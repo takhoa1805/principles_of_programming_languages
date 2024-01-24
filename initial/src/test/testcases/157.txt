@@ -1,0 +1,2 @@
+string s <- " o \A "
+    
