@@ -9,34 +9,53 @@ options {
 }
 
 //Modify ZCode.g4 to detect tokens in ZCode language
-//Make 100 testcases for LexerSuite to test your code
-//For lexical error, please return the following tokens together with specific lexemes:
-//	- ERROR_TOKEN with <unrecognized char> lexeme: when the lexer detects an unrecognized character
-//	- UNCLOSE_STRING with <unclosed string> lexeme: when the lexer detects an
-// 	 unterminated string. The <unclosed string> lexeme does not include the opening quote.
-// – ILLEGAL_ESCAPE with <wrong string> lexeme: when the lexer detects an
-// 	 illegal escape in string. The wrong string is from the beginning of the string (without
-// 	 the opening quote) to the illegal escape
-//You can assume that there is only one error in each testcase.
+//In this phase, you are required to write a recognizer for a program written in ZCode. 
+//To complete this phase, you need to:
+// - Make 100 testcases for ParserSuite to test your code
+// - You can assume that there is at most one error in each testcase
+
+//WORKING ON PARSER
 
 
-//WORKING ON ILLEGAL ESCAPE SEQUENCES
-//PRINT EVERYTHING OUT TO CHECK IF LEXER RECOGNIZE CORRECT TYPES OF TOKENS
-//TRY ADDING A REMOVE // CONSTRAINT ON STRING SO THAT IT WONT CATCH //1 CASE
+program:  EOF;
 
 
-program: EOF;
 //CÁI GÌ LÀ CỐ ĐỊNH THÌ ĐƯA LÊN ĐẦU: KEYWORDS, PARENTHESES,..
 
 //COMMENT
 COMMENT: '##' ~[\r\n]*;
 
 //RESERVED WORDS
+
+type: BOOLEAN_TYPE | NUMERIC_TYPE | STRING_TYPE;
+
+// STRING DEFINITIONS
+STRING_TYPE: 'string';
+STRING_OPERATOR: 
+	'...'
+;
+
+// BOOLEAN DEFINITIONS
+BOOLEAN_TYPE: 'bool';
+LOGIC_OPERATOR: 'not' | 'and' | 'or';
+
+// NUMERIC DEFINITIONS
+NUMERIC_TYPE: 'number';
+ARITHMETIC_OPERATORS: 
+	'+'
+	|
+	'-'
+	|
+	'*'
+	|
+	'/'
+	|
+	'%'
+
+;
+
+
 KEYWORD: 
-	'number'
-	|
-	'bool'
-	|
 	'return'
 	|
 	'var'
@@ -53,6 +72,8 @@ KEYWORD:
 	|
 	'break'
 	|
+	'continue'
+	|
 	'if'
 	|
 	'else'
@@ -61,33 +82,12 @@ KEYWORD:
 	|
 	'begin'
 	|
-	'true'
-	|
-	'false'
-
+	'end'
 ;
 CHARSET: [\n];
 
 //OPERATORS
-OPERATOR:
-	'+'
-	|
-	'-'
-	|
-	'*'
-	|
-	'/'
-	|
-	'%'
-	|
-	'<-'
-	|
-	'not'
-	|
-	'and'
-	|
-	'or'
-	|
+RELATIONAL_OPERATOR:
 	'='
 	|
 	'!='
@@ -100,11 +100,12 @@ OPERATOR:
 	|
 	'>='
 	|
-	'...'
-	|
 	'=='
 ;
 
+ASSIGN_OPERATOR:
+	'<-'
+;
 //SEPARATORS
 SEPARATOR: OPEN_BRACKET | CLOSE_BRACKET | OPEN_PARENTHESIS | CLOSE_PARENTHESIS | COMMA;
 fragment OPEN_PARENTHESIS: '(' ;
@@ -114,6 +115,8 @@ fragment CLOSE_BRACKET: ']';
 fragment COMMA: ',';
 
 //LITERALS
+BOOLEAN:'true'|'false';
+
 NUMBER: DIGIT+ ('.' DIGIT*)? EXPONENT? | DIGIT+ EXPONENT ;
 fragment DIGIT: [0-9];
 fragment EXPONENT: [eE][+-]? DIGIT+;
