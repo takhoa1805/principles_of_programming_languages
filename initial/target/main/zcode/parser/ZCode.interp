@@ -1,8 +1,16 @@
 token literal names:
 null
 null
+'string'
+'...'
+'bool'
+null
+'number'
 null
 null
+null
+null
+'<-'
 null
 null
 null
@@ -16,10 +24,18 @@ null
 token symbolic names:
 null
 COMMENT
+STRING_TYPE
+STRING_OPERATOR
+BOOLEAN_TYPE
+LOGIC_OPERATOR
+NUMERIC_TYPE
+ARITHMETIC_OPERATORS
 KEYWORD
 CHARSET
-OPERATOR
+RELATIONAL_OPERATOR
+ASSIGN_OPERATOR
 SEPARATOR
+BOOLEAN
 NUMBER
 STRING
 UNCLOSE_STRING
@@ -33,4 +49,4 @@ program
 
 
 atn:
-[3, 24715, 42794, 33075, 47597, 16764, 15335, 30598, 22884, 3, 14, 7, 4, 2, 9, 2, 3, 2, 3, 2, 3, 2, 2, 2, 3, 2, 2, 2, 2, 5, 2, 4, 3, 2, 2, 2, 4, 5, 7, 2, 2, 3, 5, 3, 3, 2, 2, 2, 2]
+[3, 24715, 42794, 33075, 47597, 16764, 15335, 30598, 22884, 3, 22, 7, 4, 2, 9, 2, 3, 2, 3, 2, 3, 2, 2, 2, 3, 2, 2, 2, 2, 5, 2, 4, 3, 2, 2, 2, 4, 5, 7, 2, 2, 3, 5, 3, 3, 2, 2, 2, 2]

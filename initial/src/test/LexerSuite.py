@@ -75,6 +75,8 @@ class LexerSuite(unittest.TestCase):
         self.assertTrue(TestLexer.test("String a = \"this is a string 123\"\n","String,a,=,this is a string 123,\n,<EOF>",614))
         self.assertTrue(TestLexer.test("String a = \"this is a string 123\n","String,a,=,Unclosed String: this is a string 123",615))
         self.assertTrue(TestLexer.test("String a = \"this is a string 123\\n","String,a,=,Unclosed String: this is a string 123\\n",616))
+        self.assertTrue(TestLexer.test(""" "abc'de" ""","Error token '",617))
+
 
         #Illegal escape
         self.assertTrue(TestLexer.test(""" "Tien \\1"  """, "Illegal Escape In String: Tien \\1", 617))

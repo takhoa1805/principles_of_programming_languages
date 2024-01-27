@@ -11,7 +11,7 @@ else:
 
 def serializedATN():
     with StringIO() as buf:
-        buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\16")
+        buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\26")
         buf.write("\7\4\2\t\2\3\2\3\2\3\2\2\2\3\2\2\2\2\5\2\4\3\2\2\2\4\5")
         buf.write("\7\2\2\3\5\3\3\2\2\2\2")
         return buf.getvalue()
@@ -27,11 +27,16 @@ class ZCodeParser ( Parser ):
 
     sharedContextCache = PredictionContextCache()
 
-    literalNames = [  ]
+    literalNames = [ "<INVALID>", "<INVALID>", "'string'", "'...'", "'bool'", 
+                     "<INVALID>", "'number'", "<INVALID>", "<INVALID>", 
+                     "<INVALID>", "<INVALID>", "'<-'" ]
 
-    symbolicNames = [ "<INVALID>", "COMMENT", "KEYWORD", "CHARSET", "OPERATOR", 
-                      "SEPARATOR", "NUMBER", "STRING", "UNCLOSE_STRING", 
-                      "ILLEGAL_ESCAPE", "IDENTIFIER", "WS", "ERROR_CHAR" ]
+    symbolicNames = [ "<INVALID>", "COMMENT", "STRING_TYPE", "STRING_OPERATOR", 
+                      "BOOLEAN_TYPE", "LOGIC_OPERATOR", "NUMERIC_TYPE", 
+                      "ARITHMETIC_OPERATORS", "KEYWORD", "CHARSET", "RELATIONAL_OPERATOR", 
+                      "ASSIGN_OPERATOR", "SEPARATOR", "BOOLEAN", "NUMBER", 
+                      "STRING", "UNCLOSE_STRING", "ILLEGAL_ESCAPE", "IDENTIFIER", 
+                      "WS", "ERROR_CHAR" ]
 
     RULE_program = 0
 
@@ -39,17 +44,25 @@ class ZCodeParser ( Parser ):
 
     EOF = Token.EOF
     COMMENT=1
-    KEYWORD=2
-    CHARSET=3
-    OPERATOR=4
-    SEPARATOR=5
-    NUMBER=6
-    STRING=7
-    UNCLOSE_STRING=8
-    ILLEGAL_ESCAPE=9
-    IDENTIFIER=10
-    WS=11
-    ERROR_CHAR=12
+    STRING_TYPE=2
+    STRING_OPERATOR=3
+    BOOLEAN_TYPE=4
+    LOGIC_OPERATOR=5
+    NUMERIC_TYPE=6
+    ARITHMETIC_OPERATORS=7
+    KEYWORD=8
+    CHARSET=9
+    RELATIONAL_OPERATOR=10
+    ASSIGN_OPERATOR=11
+    SEPARATOR=12
+    BOOLEAN=13
+    NUMBER=14
+    STRING=15
+    UNCLOSE_STRING=16
+    ILLEGAL_ESCAPE=17
+    IDENTIFIER=18
+    WS=19
+    ERROR_CHAR=20
 
     def __init__(self, input:TokenStream, output:TextIO = sys.stdout):
         super().__init__(input, output)

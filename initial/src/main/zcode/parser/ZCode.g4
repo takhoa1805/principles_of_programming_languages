@@ -19,15 +19,19 @@ options {
 
 program:  EOF;
 
+// - block ngoài cùng chỉ có thể có variable/function declaration mà thôi
+// - function ends up with a return statement or a block statement. 
+//  The nullable list of newline characters can be used to separate the parameter declaration and the body of the function
+// ==> một function có thể có 1 hoặc 0 block statement, có thể có 1 hoặc 0 return statement
 
-//CÁI GÌ LÀ CỐ ĐỊNH THÌ ĐƯA LÊN ĐẦU: KEYWORDS, PARENTHESES,..
+
 
 //COMMENT
 COMMENT: '##' ~[\r\n]*;
 
 //RESERVED WORDS
 
-type: BOOLEAN_TYPE | NUMERIC_TYPE | STRING_TYPE;
+// type: BOOLEAN_TYPE | NUMERIC_TYPE | STRING_TYPE;
 
 // STRING DEFINITIONS
 STRING_TYPE: 'string';
