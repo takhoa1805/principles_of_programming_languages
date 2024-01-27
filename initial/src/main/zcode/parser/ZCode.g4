@@ -8,30 +8,26 @@ options {
 	language=Python3;
 }
 
-//Modify ZCode.g4 to detect tokens in ZCode language
-//In this phase, you are required to write a recognizer for a program written in ZCode. 
-//To complete this phase, you need to:
-// - Make 100 testcases for ParserSuite to test your code
-// - You can assume that there is at most one error in each testcase
 
 //WORKING ON PARSER
-
-
-program:  EOF;
 
 // - block ngoài cùng chỉ có thể có variable/function declaration mà thôi
 // - function ends up with a return statement or a block statement. 
 //  The nullable list of newline characters can be used to separate the parameter declaration and the body of the function
 // ==> một function có thể có 1 hoặc 0 block statement, có thể có 1 hoặc 0 return statement
 
+program:  decllist EOF;
+decllist: decl decllist | decl;
+decl: vardecl | funcdecl;
+vardecl: NEWLINE;
+funcdecl: NEWLINE;
+
+typ: BOOL_TYPE | NUMBER_TYPE | STRING_TYPE;
+
 
 
 //COMMENT
 COMMENT: '##' ~[\r\n]*;
-
-//RESERVED WORDS
-
-// type: BOOLEAN_TYPE | NUMERIC_TYPE | STRING_TYPE;
 
 // STRING DEFINITIONS
 STRING_TYPE: 'string';
@@ -40,11 +36,11 @@ STRING_OPERATOR:
 ;
 
 // BOOLEAN DEFINITIONS
-BOOLEAN_TYPE: 'bool';
+BOOL_TYPE: 'bool';
 LOGIC_OPERATOR: 'not' | 'and' | 'or';
 
 // NUMERIC DEFINITIONS
-NUMERIC_TYPE: 'number';
+NUMBER_TYPE: 'number';
 ARITHMETIC_OPERATORS: 
 	'+'
 	|
@@ -57,7 +53,6 @@ ARITHMETIC_OPERATORS:
 	'%'
 
 ;
-
 
 KEYWORD: 
 	'return'
@@ -88,7 +83,7 @@ KEYWORD:
 	|
 	'end'
 ;
-CHARSET: [\n];
+NEWLINE: [\n];
 
 //OPERATORS
 RELATIONAL_OPERATOR:
