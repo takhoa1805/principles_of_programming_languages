@@ -16,16 +16,41 @@ options {
 //  The nullable list of newline characters can be used to separate the parameter declaration and the body of the function
 // ==> một function có thể có 1 hoặc 0 block statement, có thể có 1 hoặc 0 return statement
 
-program:  decllist EOF;
+program:decllist EOF;
 decllist: decl decllist | decl;
 decl: vardecl | funcdecl;
-vardecl: NEWLINE;
+vardecl: 
+	//Declaration only
+	typ IDENTIFIER NEWLINE
+	|
+	DYNAMIC_TYPE IDENTIFIER NEWLINE
+	|
+	//Declaration with initialization value
+	VAR_TYPE IDENTIFIER ASSIGN_OPERATOR exp NEWLINE
+	|
+	typ IDENTIFIER ASSIGN_OPERATOR exp NEWLINE
+	|
+	DYNAMIC_TYPE IDENTIFIER ASSIGN_OPERATOR exp NEWLINE
+	|
+	//Array declaration only
+	typ IDENTIFIER OPEN_BRACKET arrlist CLOSE_BRACKET NEWLINE
+	|
+	//Array declaration with initialization values
+	typ IDENTIFIER OPEN_BRACKET arrlist CLOSE_BRACKET ASSIGN_OPERATOR arrexp NEWLINE
+;
+arrlist: NUMBER COMMA arrlist | NUMBER;
+arrexp: 'arrayexpression';
+exp: 'expression';
+
+
+
 funcdecl: NEWLINE;
 
 typ: BOOL_TYPE | NUMBER_TYPE | STRING_TYPE;
 
 
-
+DYNAMIC_TYPE: 'dynamic';
+VAR_TYPE: 'var';
 //COMMENT
 COMMENT: '##' ~[\r\n]*;
 
@@ -56,10 +81,6 @@ ARITHMETIC_OPERATORS:
 
 KEYWORD: 
 	'return'
-	|
-	'var'
-	|
-	'dynamic'
 	|
 	'func'
 	|
@@ -106,12 +127,11 @@ ASSIGN_OPERATOR:
 	'<-'
 ;
 //SEPARATORS
-SEPARATOR: OPEN_BRACKET | CLOSE_BRACKET | OPEN_PARENTHESIS | CLOSE_PARENTHESIS | COMMA;
-fragment OPEN_PARENTHESIS: '(' ;
-fragment CLOSE_PARENTHESIS: ')';
-fragment OPEN_BRACKET: '[';
-fragment CLOSE_BRACKET: ']';
-fragment COMMA: ',';
+OPEN_PARENTHESIS: '(' ;
+CLOSE_PARENTHESIS: ')';
+OPEN_BRACKET: '[';
+CLOSE_BRACKET: ']';
+COMMA: ',';
 
 //LITERALS
 BOOLEAN:'true'|'false';
@@ -119,6 +139,9 @@ BOOLEAN:'true'|'false';
 NUMBER: DIGIT+ ('.' DIGIT*)? EXPONENT? | DIGIT+ EXPONENT ;
 fragment DIGIT: [0-9];
 fragment EXPONENT: [eE][+-]? DIGIT+;
+
+//IDENTIFIERS
+IDENTIFIER: [a-zA-Z_] [A-Za-z0-9_]*;
 
 //STRING_LIT: '"' (~[\r\n\f\\'"] | '\\' [bfrnt\\'] | '\'"')* '"' {self.text = self.text[1:-1];};
 STRING: DOUBLE_QUOTE (~[\n\r"\\'] |LEGAL_ESCAPE_SEQUENCE | DOUBLE_QUOTE_NOTATION)* DOUBLE_QUOTE
@@ -167,10 +190,6 @@ ILLEGAL_ESCAPE:  DOUBLE_QUOTE ((~["\n\r]|DOUBLE_QUOTE_NOTATION|LEGAL_ESCAPE_SEQU
 	
 }
 ;
-
-//IDENTIFIERS
-IDENTIFIER: [a-zA-Z_] [A-Za-z0-9_]*;
-
 
 
 
