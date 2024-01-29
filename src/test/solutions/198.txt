@@ -1,0 +1,5 @@
+func,fXAOSe0,(,pRgip5m,,,pqScMKw,,,pQXTPo6,,,pJ5RwRn,),
+,begin,
+,string,v8FwZSI,<-,-,158,
+,end,
+,<EOF>

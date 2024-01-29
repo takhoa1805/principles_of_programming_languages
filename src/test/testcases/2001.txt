@@ -1,0 +1,15 @@
+
+        number a
+        number num <- expression
+        bool num
+        bool boo <- expression
+        string str
+        string str <- expression
+        var a <- expression
+        dynamic dyn 
+        dynamic dyn <- expression
+        number a[10]
+        number a[5] <- arrayexpression
+        number a[2,3]
+        number a[2,3,4,5] <- arrayexpression
+        

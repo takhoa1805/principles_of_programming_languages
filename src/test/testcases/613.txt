@@ -1,0 +1,1 @@
+ "This \nString \nHas \nFour lines" 
