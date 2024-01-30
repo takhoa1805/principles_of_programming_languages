@@ -1,4 +1,0 @@
-
-dynamic
-number for >=	false	continue - "abcd"	else func	not % bool break end	bool number true	continue
-    

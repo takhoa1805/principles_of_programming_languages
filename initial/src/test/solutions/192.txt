@@ -1,5 +1,0 @@
-func,fYPzIzp,(,pS1mCZV,,,pwbFyZg,,,pXfOK5w,,,pfnHxd0,),
-,begin,
-,boolean,vFaU4f9,<-,-,1119,
-,end,
-,<EOF>

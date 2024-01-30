@@ -1,2 +1,0 @@
-string s <- " sxz0PUeV \z "
-    

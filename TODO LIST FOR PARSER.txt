@@ -1,0 +1,78 @@
+TODO LIST FOR PARSER
+- Block ngoài cùng chỉ có thể có variable/function declaration
+- Trong function có thể có 1 hoặc 0 có block statement và return statement
+- There are three kinds of variables: global,local, parameters of functions
+
+	- Variable declaration starts with the keyword as the name of type (number,bool,string)
+	OR the IMPLICIT keyword (var,dynamic). It is followed by a single declaration, consists of an 
+	identifier and an OPTIONAL INITIALIZATION
+	- Nếu từ bắt đầu là "var", thì bắt buộc phải khởi tạo giá trị. It starting with an assignment sign "<-"
+	and an expression. The type of expression is assigned to variable at the compile time
+	- Nếu từ bắt đầu là "dynamic". The type of a variable can be known at the compile time by 
+	the type inference technique.
+	- If a variable is declared with array type, the list of fixed size is demonstrated after the name and enclosed in 
+	the square bracket. Its following form is: <type> <variable-name>[size-1,size-2,...,size-n]. Each size should be a number literal
+	The implicit keyword cannot be used for array type
+
+	- Parameteres: a parameter declaration starts with the keyword as the name of type (number,bool,string) followed by
+	a single declaration, consists of an identifier. The implicit keyword CANNOT be used for parameter declaration.
+	A parameter in ARRAY TYPE WILL BE PASSED BY REFERENCE while a parameter in ANOTHER TYPE WILL BE PASSED BY VALUE
+	
+	- Example of variable declarations:
+		- number a
+		- number a <- 5
+		- bool a
+		- bool a <- true
+		- string a
+		- string a <- "hello world"
+		- var a <- 5
+		- var a <- 1+1
+		- var a <- b
+		- dynamic a 
+		- dynamic a <- 100
+		- dynamic a <- false
+		- dynamic a <- "dump ass zcode"
+		- array declaration:
+			- number/string/bool a[5] (implicit keyword cannot be used. size should be a number literal)
+			- number a[2,3]
+			- number a[5] <- [1,2,3,4,5]
+			- number a[2,3] <- [[1,2,3],[4,5,6]]
+
+
+- Expression: are constructs which are made up of operators and operands. Expressions work with existing data and return new data
+	- Two types of operations: 
+		- Unary: one operand
+		- Binary: two operands
+	- Operands:
+		- Variables
+		- Data returned by another operator
+		- Data returned by a function call
+	- The operators can be grouped according to the types they operate on. There are five groups of operators:
+		- Arithmetic
+		- Logic
+		- String
+		- Relational
+		- Index
+	- Function call: function cal starts with an identifier, then an opening parenthesis, a comma-separated list of arguments (nullable), closing parenthesis.
+	- Examples of expressions
+		- a+b
+		- 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

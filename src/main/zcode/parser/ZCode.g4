@@ -39,15 +39,50 @@ vardecl:
 	typ IDENTIFIER OPEN_BRACKET arrlist CLOSE_BRACKET ASSIGN_OPERATOR arrexpression NEWLINE
 ;
 arrlist: NUMBER COMMA arrlist | NUMBER;
+expression: 
+	OPEN_BRACKET expression CLOSE_BRACKET
+	|
+	<assoc=right>SUB_OPERATOR expression
+	|
+	<assoc=right>NOT_OPERATOR expression
+	|
+	expression mul_operators expression
+	|
+	expression add_operators expression
+	|
+	expression logic_operators expression
+	|
+	expression rel_operators expression
+	|
+	expression STRING_OPERATOR expression
+	
+;
+operand: 'operand';
 arrexpression: 'arrayexpression';
-expression: 'expression';
 
 
 
 funcdecl: NEWLINE;
 
 typ: BOOL_TYPE | NUMBER_TYPE | STRING_TYPE;
-
+mul_operators: MUL_OPERATOR | DIV_OPERATOR | MOD_OPERATOR;
+add_operators: ADD_OPERATOR | SUB_OPERATOR;
+logic_operators: AND_OPERATOR | OR_OPERATOR;
+rel_operators: 
+	EQ_OPERATOR 
+	| 
+	SEQ_OPERATOR 
+	| 
+	NEQ_OPERATOR 
+	| 
+	LT_OPERATOR
+	|
+	GT_OPERATOR
+	|
+	LEQ_OPERATOR
+	|
+	GEQ_OPERATOR
+;
 
 DYNAMIC_TYPE: 'dynamic';
 VAR_TYPE: 'var';
@@ -62,22 +97,18 @@ STRING_OPERATOR:
 
 // BOOLEAN DEFINITIONS
 BOOL_TYPE: 'bool';
-LOGIC_OPERATOR: 'not' | 'and' | 'or';
+NOT_OPERATOR: 'not';
+AND_OPERATOR: 'and';
+OR_OPERATOR: 'or';
 
 // NUMERIC DEFINITIONS
 NUMBER_TYPE: 'number';
-ARITHMETIC_OPERATORS: 
-	'+'
-	|
-	'-'
-	|
-	'*'
-	|
-	'/'
-	|
-	'%'
+ADD_OPERATOR: '+' ;
+SUB_OPERATOR: '-';
+MUL_OPERATOR: '*';
+DIV_OPERATOR: '/';
+MOD_OPERATOR: '%';
 
-;
 
 KEYWORD: 
 	'return'
@@ -107,21 +138,13 @@ KEYWORD:
 NEWLINE: [\n];
 
 //OPERATORS
-RELATIONAL_OPERATOR:
-	'='
-	|
-	'!='
-	|
-	'<'
-	|
-	'>'
-	|
-	'<='
-	|
-	'>='
-	|
-	'=='
-;
+EQ_OPERATOR: '=';
+NEQ_OPERATOR: '!=';
+LT_OPERATOR: '<';
+GT_OPERATOR: '>';
+LEQ_OPERATOR: '<=';
+GEQ_OPERATOR: '>=';
+SEQ_OPERATOR: '==';
 
 ASSIGN_OPERATOR:
 	'<-'

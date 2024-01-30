@@ -1,2 +1,0 @@
-string,a,<-,WuFo,s,a,
-,<EOF>

@@ -1,8 +1,0 @@
-func,fVPfDHy,(,piD2Pjl,,,pEAPyVD,,,pO6MaSX,,,p9AlkSj,),
-,begin,
-,func,f0mtjA9,(,),
-,begin,
-,string,vXwfhKQ,<-,-,843,
-,end,
-,end,
-,<EOF>
