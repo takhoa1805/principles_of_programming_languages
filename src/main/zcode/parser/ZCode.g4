@@ -36,17 +36,17 @@ vardecl:
 	typ IDENTIFIER OPEN_BRACKET arrlist CLOSE_BRACKET NEWLINE
 	|
 	//Array declaration with initialization values
-	typ IDENTIFIER OPEN_BRACKET arrlist CLOSE_BRACKET ASSIGN_OPERATOR arrexpression NEWLINE
+	typ IDENTIFIER OPEN_BRACKET arrlist CLOSE_BRACKET ASSIGN_OPERATOR expression NEWLINE
 ;
 arrlist: NUMBER COMMA arrlist | NUMBER;
 expression: 
+	expression OPEN_BRACKET index_operators CLOSE_BRACKET
+	|
 	OPEN_PARENTHESIS expression CLOSE_PARENTHESIS
 	|
-	// <assoc=right>SUB_OPERATOR expression
-	SUB_OPERATOR expression
+	<assoc=right>SUB_OPERATOR expression
 	|
-	// <assoc=right>NOT_OPERATOR expression
-	NOT_OPERATOR expression
+	<assoc=right>NOT_OPERATOR expression
 	|
 	expression mul_operators expression
 	|
@@ -58,18 +58,29 @@ expression:
 	|
 	expression str_operators expression
 	|
+	func_call
+	|
 	literal
 	
 ;
-operand: 'operand';
-arrexpression: 'arrayexpression';
+index_operators: expression | expression COMMA index_operators;
+func_call: IDENTIFIER OPEN_PARENTHESIS  param_list CLOSE_PARENTHESIS;
+param_list: param_prime | ;
+param_prime: param COMMA param_prime | param;
+param: 
+	typ IDENTIFIER 
+	| 
+	typ IDENTIFIER OPEN_BRACKET arrlist CLOSE_BRACKET
+;
 
 
 
 funcdecl: NEWLINE;
 
 typ: BOOL_TYPE | NUMBER_TYPE | STRING_TYPE;
+
 literal: STRING | NUMBER | BOOLEAN | IDENTIFIER;
+
 mul_operators: MUL_OPERATOR | DIV_OPERATOR | MOD_OPERATOR;
 add_operators: ADD_OPERATOR | SUB_OPERATOR;
 logic_operators: AND_OPERATOR | OR_OPERATOR;
@@ -93,7 +104,7 @@ str_operators: STRING_OPERATOR;
 DYNAMIC_TYPE: 'dynamic';
 VAR_TYPE: 'var';
 //COMMENT
-COMMENT: '##' ~[\r\n]*;
+COMMENT: '##' ~[\r\n]* -> skip;
 
 // STRING DEFINITIONS
 STRING_TYPE: 'string';

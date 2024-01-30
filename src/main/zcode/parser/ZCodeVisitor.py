@@ -39,13 +39,28 @@ class ZCodeVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by ZCodeParser#operand.
-    def visitOperand(self, ctx:ZCodeParser.OperandContext):
+    # Visit a parse tree produced by ZCodeParser#index_operators.
+    def visitIndex_operators(self, ctx:ZCodeParser.Index_operatorsContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by ZCodeParser#arrexpression.
-    def visitArrexpression(self, ctx:ZCodeParser.ArrexpressionContext):
+    # Visit a parse tree produced by ZCodeParser#func_call.
+    def visitFunc_call(self, ctx:ZCodeParser.Func_callContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ZCodeParser#param_list.
+    def visitParam_list(self, ctx:ZCodeParser.Param_listContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ZCodeParser#param_prime.
+    def visitParam_prime(self, ctx:ZCodeParser.Param_primeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ZCodeParser#param.
+    def visitParam(self, ctx:ZCodeParser.ParamContext):
         return self.visitChildren(ctx)
 
 

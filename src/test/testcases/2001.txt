@@ -13,6 +13,11 @@
         number a[2,3]
         number a[2,3,4,5] <- arrayexpression
 
-        number a <- not (1+a-b*2/5%cd) and e or d = 5 == f != g > h < i >= j <= k ... l
 
+        number a <- a[5]
+        number a[5] <- a[b[2,4],3]
+
+        dynamic a <- foo(string bar[5])
+        var a <- foo()
+        
         
