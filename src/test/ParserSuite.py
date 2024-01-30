@@ -18,6 +18,9 @@ class ParserSuite(unittest.TestCase):
         number a[5] <- arrayexpression
         number a[2,3]
         number a[2,3,4,5] <- arrayexpression
+
+        number a <- not (1+a-b*2/5%cd) and e or d = 5 == f != g > h < i >= j <= k ... l
+
         """
         expect = "successful"
         self.assertTrue(TestParser.test(input,expect,2001))

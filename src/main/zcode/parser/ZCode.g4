@@ -16,7 +16,7 @@ options {
 //  The nullable list of newline characters can be used to separate the parameter declaration and the body of the function
 // ==> một function có thể có 1 hoặc 0 block statement, có thể có 1 hoặc 0 return statement
 
-program:decllist EOF;
+program: decllist EOF;
 decllist: decl decllist | decl;
 decl: vardecl | funcdecl;
 vardecl: 
@@ -40,11 +40,13 @@ vardecl:
 ;
 arrlist: NUMBER COMMA arrlist | NUMBER;
 expression: 
-	OPEN_BRACKET expression CLOSE_BRACKET
+	OPEN_PARENTHESIS expression CLOSE_PARENTHESIS
 	|
-	<assoc=right>SUB_OPERATOR expression
+	// <assoc=right>SUB_OPERATOR expression
+	SUB_OPERATOR expression
 	|
-	<assoc=right>NOT_OPERATOR expression
+	// <assoc=right>NOT_OPERATOR expression
+	NOT_OPERATOR expression
 	|
 	expression mul_operators expression
 	|
@@ -54,7 +56,9 @@ expression:
 	|
 	expression rel_operators expression
 	|
-	expression STRING_OPERATOR expression
+	expression str_operators expression
+	|
+	literal
 	
 ;
 operand: 'operand';
@@ -65,6 +69,7 @@ arrexpression: 'arrayexpression';
 funcdecl: NEWLINE;
 
 typ: BOOL_TYPE | NUMBER_TYPE | STRING_TYPE;
+literal: STRING | NUMBER | BOOLEAN | IDENTIFIER;
 mul_operators: MUL_OPERATOR | DIV_OPERATOR | MOD_OPERATOR;
 add_operators: ADD_OPERATOR | SUB_OPERATOR;
 logic_operators: AND_OPERATOR | OR_OPERATOR;
@@ -83,6 +88,7 @@ rel_operators:
 	|
 	GEQ_OPERATOR
 ;
+str_operators: STRING_OPERATOR;
 
 DYNAMIC_TYPE: 'dynamic';
 VAR_TYPE: 'var';

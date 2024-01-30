@@ -34,13 +34,18 @@ class ZCodeVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by ZCodeParser#arrexp.
-    def visitArrexp(self, ctx:ZCodeParser.ArrexpContext):
+    # Visit a parse tree produced by ZCodeParser#expression.
+    def visitExpression(self, ctx:ZCodeParser.ExpressionContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by ZCodeParser#exp.
-    def visitExp(self, ctx:ZCodeParser.ExpContext):
+    # Visit a parse tree produced by ZCodeParser#operand.
+    def visitOperand(self, ctx:ZCodeParser.OperandContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ZCodeParser#arrexpression.
+    def visitArrexpression(self, ctx:ZCodeParser.ArrexpressionContext):
         return self.visitChildren(ctx)
 
 
@@ -51,6 +56,36 @@ class ZCodeVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by ZCodeParser#typ.
     def visitTyp(self, ctx:ZCodeParser.TypContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ZCodeParser#literal.
+    def visitLiteral(self, ctx:ZCodeParser.LiteralContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ZCodeParser#mul_operators.
+    def visitMul_operators(self, ctx:ZCodeParser.Mul_operatorsContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ZCodeParser#add_operators.
+    def visitAdd_operators(self, ctx:ZCodeParser.Add_operatorsContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ZCodeParser#logic_operators.
+    def visitLogic_operators(self, ctx:ZCodeParser.Logic_operatorsContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ZCodeParser#rel_operators.
+    def visitRel_operators(self, ctx:ZCodeParser.Rel_operatorsContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ZCodeParser#str_operators.
+    def visitStr_operators(self, ctx:ZCodeParser.Str_operatorsContext):
         return self.visitChildren(ctx)
 
 

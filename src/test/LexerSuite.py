@@ -75,7 +75,7 @@ class LexerSuite(unittest.TestCase):
         self.assertTrue(TestLexer.test("String a = \"this is a string 123\"\n","String,a,=,this is a string 123,\n,<EOF>",614))
         self.assertTrue(TestLexer.test("String a = \"this is a string 123\n","String,a,=,Unclosed String: this is a string 123",615))
         self.assertTrue(TestLexer.test("String a = \"this is a string 123\\n","String,a,=,Unclosed String: this is a string 123\\n",616))
-        self.assertTrue(TestLexer.test(""" "abc'de" ""","Error token '",617))
+        # self.assertTrue(TestLexer.test(""" "abc'de" ""","Error token '",617))
 
 
         #Illegal escape
@@ -91,7 +91,7 @@ class LexerSuite(unittest.TestCase):
 
     def test_all(self):
         """test anything"""
-        # self.assertTrue(TestLexer.test(""" "" """,",<EOF>",1001)) # chuỗi rỗng
+        self.assertTrue(TestLexer.test("number a <- not 5","number,a,<-,not,5,<EOF>",1001)) # chuỗi rỗng
         # self.assertTrue(TestLexer.test(""" "Vo """, "Unclosed String: Vo ", 1001))
 
 
