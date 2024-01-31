@@ -17,10 +17,10 @@ class LexerSuite(unittest.TestCase):
     def test_comments(self):
         """test comments"""
         #TRUE COMMENTS
-        self.assertTrue(TestLexer.test("##THIS IS A COMMENT","##THIS IS A COMMENT,<EOF>",21))
-        self.assertTrue(TestLexer.test("###THIS IS A COMMENT #","###THIS IS A COMMENT #,<EOF>",22))
-        self.assertTrue(TestLexer.test("##Variable a\nnumber a\n ","##Variable a,\n,number,a,\n,<EOF>",23))
-        self.assertTrue(TestLexer.test("number a ##Variable a","number,a,##Variable a,<EOF>",24))
+        self.assertTrue(TestLexer.test("##THIS IS A COMMENT","<EOF>",21))
+        self.assertTrue(TestLexer.test("###THIS IS A COMMENT #","<EOF>",22))
+        self.assertTrue(TestLexer.test("##Variable a\nnumber a\n ","\n,number,a,\n,<EOF>",23))
+        self.assertTrue(TestLexer.test("number a ##Variable a","number,a,<EOF>",24))
 
 
         #FALSE COMMENTS
@@ -344,7 +344,7 @@ var a <- "## comment in string"
 end
 
     """
-        expect = "\n,## comment,\n,func,main,(,),\n,begin,\n,##hello,\n,## \"hello\",\n,var,a,<-,## comment in string,\n,end,\n,\n,<EOF>"
+        expect = "\n,\n,func,main,(,),\n,begin,\n,\n,\n,var,a,<-,\n,end,\n,\n,<EOF>"
         try:
             self.assertTrue(TestLexer.test(input,expect,115))
         except:
@@ -361,7 +361,7 @@ var a <- "## comment in string"
 end
 
     """
-        expect = "\n,\n,func,main,(,),\n,begin,## comment,\n,##hello,\n,## \"hello\",\n,var,a,<-,## comment in string,\n,end,\n,\n,<EOF>"
+        expect = "\n,\n,func,main,(,),\n,begin,\n,\n,\n,var,a,<-,\n,end,\n,\n,<EOF>"
         try:
             self.assertTrue(TestLexer.test(input,expect,116))
         except:
@@ -378,7 +378,7 @@ var a <- "## comment in string"
 end
 
     """
-        expect = "\n,\n,func,main,(,),\n,begin,\n,## comment ##hello,\n,## \"hello\",\n,var,a,<-,## comment in string,\n,end,\n,\n,<EOF>"
+        expect = "\n,\n,func,main,(,),\n,begin,\n,\n,\n,var,a,<-,\n,end,\n,\n,<EOF>"
         try:
             self.assertTrue(TestLexer.test(input,expect,117))
         except:
@@ -395,7 +395,7 @@ var a <- "## comment in string"    ## comment
 end
 
     """
-        expect = "\n,\n,func,main,(,),\n,begin,\n,##hello,\n,## \"hello\",\n,var,a,<-,## comment in string,## comment,\n,end,\n,\n,<EOF>"
+        expect = "\n,\n,func,main,(,),\n,begin,\n,\n,\n,var,a,<-,\n,end,\n,\n,<EOF>"
         try:
             self.assertTrue(TestLexer.test(input,expect,118))
         except:
@@ -412,7 +412,7 @@ var a <- "## comment in string"
 end
 ## comment
     """
-        expect = "\n,\n,func,main,(,),\n,begin,\n,##hello,\n,## \"hello\",\n,var,a,<-,## comment in string,\n,end,\n,## comment,\n,<EOF>"
+        expect = "\n,\n,func,main,(,),\n,begin,\n,\n,\n,var,a,<-,\n,end,\n,<EOF>"
         try:
             self.assertTrue(TestLexer.test(input,expect,119))
         except:

@@ -1,0 +1,29 @@
+
+        func main()
+        begin
+            if(true) begin
+                a <- b
+                var a <- 5
+                return true
+                if(false) begin
+                a <- b > 5
+                return true
+                end
+            end 
+        end
+
+        func main()
+        begin
+            if(true) return true
+            elif(false) return false
+            elif(true) return
+            elif(not true) begin
+                var a <- 5
+                return a
+            end
+            else return true
+            
+        end
+
+         
+        

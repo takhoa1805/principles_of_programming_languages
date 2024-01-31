@@ -1,0 +1,19 @@
+
+        func main()
+        begin
+            var i <- 0
+            for i until 1+1 by a begin
+            i <- 1000
+            if (true)  begin
+                break
+            end
+            elif (false) continue
+            else return
+
+            end
+            
+        end
+
+        func main() begin
+        end
+        

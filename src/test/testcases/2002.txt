@@ -1,0 +1,13 @@
+
+        
+        func main()
+
+        func main(number board[5,5]) 
+        begin
+        var a <- 5
+        a <- 5
+        main(board[5][5])
+        return main(board(a))
+        end
+
+        

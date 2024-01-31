@@ -1,1 +1,1 @@
-number,a,##Variable a,<EOF>
+number,a,<EOF>

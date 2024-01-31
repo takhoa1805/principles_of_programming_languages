@@ -16,8 +16,8 @@ options {
 //  The nullable list of newline characters can be used to separate the parameter declaration and the body of the function
 // ==> một function có thể có 1 hoặc 0 block statement, có thể có 1 hoặc 0 return statement
 
-program: decllist EOF;
-decllist: decl decllist | decl;
+program: newline_list decllist EOF;
+decllist:  decl decllist | decl ;
 decl: vardecl | funcdecl ;
 
 
@@ -28,24 +28,26 @@ decl: vardecl | funcdecl ;
 //-------------------------------------------------------------------//
 vardecl: 
 	//Declaration only
-	typ IDENTIFIER newline_list NEWLINE
+	typ IDENTIFIER NEWLINE newline_list
 	|
-	DYNAMIC_TYPE IDENTIFIER newline_list NEWLINE
+	DYNAMIC_TYPE IDENTIFIER NEWLINE newline_list
 	|
 	//Declaration with initialization value
-	VAR_TYPE IDENTIFIER ASSIGN_OPERATOR expression newline_list NEWLINE
+	VAR_TYPE IDENTIFIER ASSIGN_OPERATOR expression NEWLINE newline_list
 	|
-	typ IDENTIFIER ASSIGN_OPERATOR expression newline_list NEWLINE
+	typ IDENTIFIER ASSIGN_OPERATOR expression NEWLINE newline_list
 	|
-	DYNAMIC_TYPE IDENTIFIER ASSIGN_OPERATOR expression newline_list NEWLINE
+	DYNAMIC_TYPE IDENTIFIER ASSIGN_OPERATOR expression NEWLINE newline_list
 	|
 	//Array declaration only
-	typ IDENTIFIER OPEN_BRACKET arrlist CLOSE_BRACKET newline_list NEWLINE
+	typ IDENTIFIER OPEN_BRACKET arrlist CLOSE_BRACKET NEWLINE newline_list
 	|
 	//Array declaration with initialization values
-	typ IDENTIFIER OPEN_BRACKET arrlist CLOSE_BRACKET ASSIGN_OPERATOR expression newline_list NEWLINE
+	typ IDENTIFIER OPEN_BRACKET arrlist CLOSE_BRACKET ASSIGN_OPERATOR expression NEWLINE newline_list
 ;
 arrlist: NUMBER COMMA arrlist | NUMBER;
+array_expression: OPEN_BRACKET arrlist CLOSE_BRACKET | arrlist;
+arrlist_expression: OPEN_BRACKET array_expression COMMA arrlist_expression CLOSE_BRACKET | array_expression;
 expression: 
 	expression OPEN_BRACKET index_operators CLOSE_BRACKET
 	|
@@ -68,6 +70,8 @@ expression:
 	// non_associative_operands str_operators non_associative_operands ===> FOR SEMANTIC STEP?
 	|
 	expression str_operators expression
+	|
+	array_expression
 	|
 	func_call
 	|
@@ -148,9 +152,9 @@ VAR_TYPE: 'var';
 //-------------------------------------------------------------------//
 //-------------------------------------------------------------------//
 
-// funcdecl: 'func' IDENTIFIER OPEN_PARENTHESIS param_decl_list CLOSE_PARENTHESIS newline_list body ;
-funcdecl:'func' IDENTIFIER param_decl newline_list body newline_list NEWLINE;
-param_decl: OPEN_PARENTHESIS param_decl_list CLOSE_PARENTHESIS;
+funcdecl: 'func' IDENTIFIER OPEN_PARENTHESIS param_decl_list CLOSE_PARENTHESIS newline_list body  newline_list;
+// funcdecl: FUNC IDENTIFIER param_decl newline_list body NEWLINE newline_list;
+// param_decl: OPEN_PARENTHESIS param_decl_list CLOSE_PARENTHESIS;
 
 
 param_decl_list: param_decl_prime | ;
@@ -166,35 +170,37 @@ param_single_decl:
 	//Array declaration only
 	typ IDENTIFIER OPEN_BRACKET arrlist CLOSE_BRACKET 
 ;
-newline_list: NEWLINE newline_list | ;
+newline_list: NEWLINE newline_list |  ;
 
-body: statement_block | ret | ;
+body: statement_block | ret |  ;
 
-statement_block: 'begin' statement_list 'end' newline_list NEWLINE;
-statement_list: statement statement_list | ;
+statement_block: BEGIN statement_list END NEWLINE newline_list;
+statement_list: newline_list statement newline_list statement_list | newline_list;
 statement: 
 	vardecl
 	|
-	assignment_statement
+	assignment_statement 
 	|
-	if_statement
+	if_statement 
 	|
-	for_statement
+	for_statement 
 	|
-	break_statement
+	break_statement 
 	|
-	continue_statement
+	continue_statement 
 	|
-	return_statement
+	return_statement 
 	|
-	func_call_statement
+	func_call_statement 
+	|
+	statement_block
 ;
 
-ret: 'return' expression | 'return';
-return_statement: ret newline_list NEWLINE;
-func_call_statement: func_call newline_list NEWLINE;
+ret: RETURN expression | RETURN;
+return_statement: ret NEWLINE newline_list;
+func_call_statement: func_call NEWLINE newline_list;
 
-assignment_statement: lhs ASSIGN_OPERATOR rhs newline_list NEWLINE;
+assignment_statement: lhs ASSIGN_OPERATOR rhs NEWLINE newline_list;
 lhs: 
 	IDENTIFIER
 	|
@@ -202,13 +208,50 @@ lhs:
 ;
 rhs: expression;
 
-if_statement: 'if statement' newline_list NEWLINE ;
-for_statement: 'for statement' newline_list NEWLINE;
-break_statement: 'break statement' newline_list NEWLINE;
-continue_statement: 'continue statement' newline_list NEWLINE;
+// if_statement: IF OPEN_PARENTHESIS expression CLOSE_PARENTHESIS if_body elif_statement_list else_statement NEWLINE newline_list;
+if_statement: IF OPEN_PARENTHESIS expression CLOSE_PARENTHESIS if_body elif_statement_list else_statement newline_list;
+
+if_body:
+	statement
+	|
+	statement_block
+	|
+	NEWLINE
+;
+
+elif_statement_list: elif_statement elif_statement_list |  ;
+elif_statement: ELIF OPEN_PARENTHESIS expression CLOSE_PARENTHESIS if_body;
+else_statement: ELSE if_body |  ;
+
+
+for_statement: FOR IDENTIFIER UNTIL expression BY expression newline_list for_body;
+for_body: 	
+	statement
+	|
+	statement_block
+	|
+	NEWLINE
+;
+
+FOR_STATEMENT: 'for statement';
+BREAK_STATEMENT: 'break';
+CONTINUE_STATEMENT: 'continue';
 
 
 
+break_statement: BREAK_STATEMENT NEWLINE newline_list;
+continue_statement: CONTINUE_STATEMENT NEWLINE newline_list;
+
+FUNC: 'func';
+BEGIN: 'begin';
+END: 'end';
+RETURN: 'return';
+IF: 'if';
+ELIF: 'elif';
+ELSE: 'else';
+FOR: 'for';
+UNTIL: 'until';
+BY: 'by';
 
 //-------------------------------------------------------------------//
 //-------------------------------------------------------------------//
@@ -246,32 +289,8 @@ DIV_OPERATOR: '/';
 MOD_OPERATOR: '%';
 
 
-KEYWORD: 
-	'return'
-	|
-	'func'
-	|
-	'for'
-	|
-	'until'
-	|
-	'by'
-	|
-	'break'
-	|
-	'continue'
-	|
-	'if'
-	|
-	'else'
-	|
-	'elif'
-	|
-	'begin'
-	|
-	'end'
-;
-NEWLINE: [\n];
+
+NEWLINE: '\n' | '\r\n';
 
 //OPERATORS
 EQ_OPERATOR: '=';
@@ -317,7 +336,7 @@ fragment ILLEGAL_ESCAPE_SEQUENCE: '\\''\\'~[bfrnt'\\];
 UNCLOSE_STRING: DOUBLE_QUOTE ((~["\\']|DOUBLE_QUOTE_NOTATION|LEGAL_ESCAPE_SEQUENCE)*([\n\r]| EOF))
 {
 	self.text = self.text[1:]
-	print("this is an unclosed string: "+repr(self.text))
+	#print("this is an unclosed string: "+repr(self.text))
 	
 	#Windows case
 	tmp = self.text[::-1].find("\n")
@@ -325,7 +344,7 @@ UNCLOSE_STRING: DOUBLE_QUOTE ((~["\\']|DOUBLE_QUOTE_NOTATION|LEGAL_ESCAPE_SEQUEN
 	if (tmp != -1):
 		if (self.text[::-1].find("\n\r")!=-1):
 			self.text = self.text[0:len(self.text)-tmp-2]
-			print("windows case: "+repr(self.text))
+			#print("windows case: "+repr(self.text))
 			raise UncloseString(self.text)
 			return
 		else:
@@ -334,7 +353,7 @@ UNCLOSE_STRING: DOUBLE_QUOTE ((~["\\']|DOUBLE_QUOTE_NOTATION|LEGAL_ESCAPE_SEQUEN
 
 			if(tmp!=-1):
 				self.text = self.text[0:len(self.text)-tmp-1]
-				print("Linux case: "+self.text)
+				#print("Linux case: "+self.text)
 				raise UncloseString(self.text)
 				return
 
@@ -344,7 +363,7 @@ UNCLOSE_STRING: DOUBLE_QUOTE ((~["\\']|DOUBLE_QUOTE_NOTATION|LEGAL_ESCAPE_SEQUEN
 ILLEGAL_ESCAPE:  DOUBLE_QUOTE ((~["\n\r]|DOUBLE_QUOTE_NOTATION|LEGAL_ESCAPE_SEQUENCE)*('\\'~[bfrnt'\\] | [']~["]))
 {
 	self.text = self.text[1:]
-	print("this is illegal escape: "+self.text)
+	#print("this is illegal escape: "+self.text)
 	raise IllegalEscape(self.text)
 	
 }

@@ -1,0 +1,8 @@
+
+        func main()
+            begin
+                VoTien <- 1 + 2 + fun()
+                VoTien[1+a] <- 1
+                VoTien[2][3+4] <- 1
+            end
+        

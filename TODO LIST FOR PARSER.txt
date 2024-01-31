@@ -56,7 +56,21 @@ TODO LIST FOR PARSER
 	- Function call: function cal starts with an identifier, then an opening parenthesis, a comma-separated list of arguments (nullable), closing parenthesis.
 	- Examples of expressions
 		- a+b
-		- 
+		
+
+
+- Function declaration: 
+	- Every function starts with the keyword 'func' following by an identifier, a nullable comma-separated list of parameters enclosed by a round bracket
+	- OPTIONALLY ends up with a RETURN statement or a BLOCK statement.
+	- The nullable list of newline characters can be used to separate the parameter declaration and the body of the function
+	- Zode allows functions to have a declaration-only part => RETURN và BLOCK statement có thể không có. But afterward, there must be a complete implementation. 
+	- The function's type will be inferred from the return statement. If there is no return statement, the function will not return anything
+	- As the first introduction, the Zcode must have the function main for starting entry point
+
+
+- if statement body:
+	- có thể là một statement hoặc một statement block hoặc bỏ trống
+	- Kết thúc bằng ít nhất MỘT newline
 
 
 
