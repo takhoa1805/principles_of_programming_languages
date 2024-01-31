@@ -18,25 +18,32 @@ options {
 
 program: decllist EOF;
 decllist: decl decllist | decl;
-decl: vardecl | funcdecl;
+decl: vardecl | funcdecl ;
+
+
+//-------------------------------------------------------------------//
+//-------------------------------------------------------------------//
+//--------------------------VAR DECLARATION--------------------------//
+//-------------------------------------------------------------------//
+//-------------------------------------------------------------------//
 vardecl: 
 	//Declaration only
-	typ IDENTIFIER NEWLINE
+	typ IDENTIFIER newline_list NEWLINE
 	|
-	DYNAMIC_TYPE IDENTIFIER NEWLINE
+	DYNAMIC_TYPE IDENTIFIER newline_list NEWLINE
 	|
 	//Declaration with initialization value
-	VAR_TYPE IDENTIFIER ASSIGN_OPERATOR expression NEWLINE
+	VAR_TYPE IDENTIFIER ASSIGN_OPERATOR expression newline_list NEWLINE
 	|
-	typ IDENTIFIER ASSIGN_OPERATOR expression NEWLINE
+	typ IDENTIFIER ASSIGN_OPERATOR expression newline_list NEWLINE
 	|
-	DYNAMIC_TYPE IDENTIFIER ASSIGN_OPERATOR expression NEWLINE
+	DYNAMIC_TYPE IDENTIFIER ASSIGN_OPERATOR expression newline_list NEWLINE
 	|
 	//Array declaration only
-	typ IDENTIFIER OPEN_BRACKET arrlist CLOSE_BRACKET NEWLINE
+	typ IDENTIFIER OPEN_BRACKET arrlist CLOSE_BRACKET newline_list NEWLINE
 	|
 	//Array declaration with initialization values
-	typ IDENTIFIER OPEN_BRACKET arrlist CLOSE_BRACKET ASSIGN_OPERATOR expression NEWLINE
+	typ IDENTIFIER OPEN_BRACKET arrlist CLOSE_BRACKET ASSIGN_OPERATOR expression newline_list NEWLINE
 ;
 arrlist: NUMBER COMMA arrlist | NUMBER;
 expression: 
@@ -99,9 +106,6 @@ non_associative_operands:
 ;
 
 
-
-funcdecl: NEWLINE;
-
 typ: BOOL_TYPE | NUMBER_TYPE | STRING_TYPE;
 
 literal: STRING | NUMBER | BOOLEAN | IDENTIFIER;
@@ -126,13 +130,104 @@ rel_operators:
 ;
 str_operators: STRING_OPERATOR;
 
+STRING_TYPE: 'string';
+NUMBER_TYPE: 'number';
 DYNAMIC_TYPE: 'dynamic';
 VAR_TYPE: 'var';
+
+//-------------------------------------------------------------------//
+//-------------------------------------------------------------------//
+//-----------------------END OF VAR DECLARATION----------------------//
+//-------------------------------------------------------------------//
+//-------------------------------------------------------------------//
+
+
+//-------------------------------------------------------------------//
+//-------------------------------------------------------------------//
+//-------------------------FUNC DECLARATION--------------------------//
+//-------------------------------------------------------------------//
+//-------------------------------------------------------------------//
+
+// funcdecl: 'func' IDENTIFIER OPEN_PARENTHESIS param_decl_list CLOSE_PARENTHESIS newline_list body ;
+funcdecl:'func' IDENTIFIER param_decl newline_list body newline_list NEWLINE;
+param_decl: OPEN_PARENTHESIS param_decl_list CLOSE_PARENTHESIS;
+
+
+param_decl_list: param_decl_prime | ;
+param_decl_prime: 
+	param_single_decl COMMA param_decl_prime 
+	| 
+	param_single_decl
+;
+param_single_decl:
+	//Declaration only
+	typ IDENTIFIER 
+	|
+	//Array declaration only
+	typ IDENTIFIER OPEN_BRACKET arrlist CLOSE_BRACKET 
+;
+newline_list: NEWLINE newline_list | ;
+
+body: statement_block | ret | ;
+
+statement_block: 'begin' statement_list 'end' newline_list NEWLINE;
+statement_list: statement statement_list | ;
+statement: 
+	vardecl
+	|
+	assignment_statement
+	|
+	if_statement
+	|
+	for_statement
+	|
+	break_statement
+	|
+	continue_statement
+	|
+	return_statement
+	|
+	func_call_statement
+;
+
+ret: 'return' expression | 'return';
+return_statement: ret newline_list NEWLINE;
+func_call_statement: func_call newline_list NEWLINE;
+
+assignment_statement: lhs ASSIGN_OPERATOR rhs newline_list NEWLINE;
+lhs: 
+	IDENTIFIER
+	|
+	expression OPEN_BRACKET index_operators CLOSE_BRACKET
+;
+rhs: expression;
+
+if_statement: 'if statement' newline_list NEWLINE ;
+for_statement: 'for statement' newline_list NEWLINE;
+break_statement: 'break statement' newline_list NEWLINE;
+continue_statement: 'continue statement' newline_list NEWLINE;
+
+
+
+
+//-------------------------------------------------------------------//
+//-------------------------------------------------------------------//
+//-----------------------END OF FUNC DECLARATION---------------------//
+//-------------------------------------------------------------------//
+//-------------------------------------------------------------------//
+
+
+
+//-------------------------------------------------------------------//
+//-------------------------------------------------------------------//
+//-------------------------------LEXER-------------------------------//
+//-------------------------------------------------------------------//
+//-------------------------------------------------------------------//
+
 //COMMENT
 COMMENT: '##' ~[\r\n]* -> skip;
 
 // STRING DEFINITIONS
-STRING_TYPE: 'string';
 STRING_OPERATOR: 
 	'...'
 ;
@@ -144,7 +239,6 @@ AND_OPERATOR: 'and';
 OR_OPERATOR: 'or';
 
 // NUMERIC DEFINITIONS
-NUMBER_TYPE: 'number';
 ADD_OPERATOR: '+' ;
 SUB_OPERATOR: '-';
 MUL_OPERATOR: '*';

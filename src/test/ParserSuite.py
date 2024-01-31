@@ -28,6 +28,7 @@ class ParserSuite(unittest.TestCase):
 
         var a <- (1)...2
         
+        
         """
         expect = "successful"
         self.assertTrue(TestParser.test(input,expect,2001))
