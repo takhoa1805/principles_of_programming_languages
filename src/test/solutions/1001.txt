@@ -1,1 +1,1 @@
-number,a,<-,not,5,<EOF>
+var,VoTien,<-,not,not,not,-,-,-,-,C,<EOF>

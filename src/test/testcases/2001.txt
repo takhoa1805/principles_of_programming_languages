@@ -17,7 +17,9 @@
         number a <- a[5]
         number a[5] <- a[b[2,4],3]
 
-        dynamic a <- foo(string bar[5])
+        dynamic a <- foo(bar[5])
         var a <- foo()
+
+        var a <- (1)...2
         
         

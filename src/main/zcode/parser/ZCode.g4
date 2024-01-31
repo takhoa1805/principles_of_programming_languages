@@ -53,8 +53,12 @@ expression:
 	expression add_operators expression
 	|
 	expression logic_operators expression
+	// |
+	// non_associative_operands rel_operators non_associative_operands ===> FOR SEMANTIC STEP?
 	|
 	expression rel_operators expression
+	// |
+	// non_associative_operands str_operators non_associative_operands ===> FOR SEMANTIC STEP?
 	|
 	expression str_operators expression
 	|
@@ -63,14 +67,35 @@ expression:
 	literal
 	
 ;
+sign_operands: literal | SUB_OPERATOR ;
+not_operands: literal | NOT_OPERATOR;
 index_operators: expression | expression COMMA index_operators;
 func_call: IDENTIFIER OPEN_PARENTHESIS  param_list CLOSE_PARENTHESIS;
 param_list: param_prime | ;
 param_prime: param COMMA param_prime | param;
 param: 
-	typ IDENTIFIER 
+	expression
+;
+non_rel_operators: mul_operators | add_operators | logic_operators |str_operators;
+non_str_operators: mul_operators | add_operators | logic_operators |rel_operators;
+
+
+non_associative_operands: 
+	func_call 
 	| 
-	typ IDENTIFIER OPEN_BRACKET arrlist CLOSE_BRACKET
+	literal
+	|
+	func_call OPEN_BRACKET index_operators CLOSE_BRACKET
+	|
+	literal OPEN_BRACKET index_operators CLOSE_BRACKET
+	|
+	<assoc=right>SUB_OPERATOR func_call
+	|
+	<assoc=right>SUB_OPERATOR literal
+	|
+	<assoc=right>NOT_OPERATOR func_call
+	|
+	<assoc=right>NOT_OPERATOR literal
 ;
 
 

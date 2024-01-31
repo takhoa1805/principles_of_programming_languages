@@ -91,7 +91,7 @@ class LexerSuite(unittest.TestCase):
 
     def test_all(self):
         """test anything"""
-        self.assertTrue(TestLexer.test("number a <- not 5","number,a,<-,not,5,<EOF>",1001)) # chuỗi rỗng
+        self.assertTrue(TestLexer.test("var VoTien <- not not not----C","var,VoTien,<-,not,not,not,-,-,-,-,C,<EOF>",1001)) # chuỗi rỗng
         # self.assertTrue(TestLexer.test(""" "Vo """, "Unclosed String: Vo ", 1001))
 
 

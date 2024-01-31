@@ -39,6 +39,16 @@ class ZCodeVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by ZCodeParser#sign_operands.
+    def visitSign_operands(self, ctx:ZCodeParser.Sign_operandsContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ZCodeParser#not_operands.
+    def visitNot_operands(self, ctx:ZCodeParser.Not_operandsContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by ZCodeParser#index_operators.
     def visitIndex_operators(self, ctx:ZCodeParser.Index_operatorsContext):
         return self.visitChildren(ctx)
@@ -61,6 +71,21 @@ class ZCodeVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by ZCodeParser#param.
     def visitParam(self, ctx:ZCodeParser.ParamContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ZCodeParser#non_rel_operators.
+    def visitNon_rel_operators(self, ctx:ZCodeParser.Non_rel_operatorsContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ZCodeParser#non_str_operators.
+    def visitNon_str_operators(self, ctx:ZCodeParser.Non_str_operatorsContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ZCodeParser#non_associative_operands.
+    def visitNon_associative_operands(self, ctx:ZCodeParser.Non_associative_operandsContext):
         return self.visitChildren(ctx)
 
 
