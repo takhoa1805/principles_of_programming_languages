@@ -128,11 +128,6 @@ rel_operators:
 ;
 str_operators: STRING_OPERATOR;
 
-STRING_TYPE: 'string';
-NUMBER_TYPE: 'number';
-DYNAMIC_TYPE: 'dynamic';
-VAR_TYPE: 'var';
-
 //-------------------------------------------------------------------//
 //-------------------------------------------------------------------//
 //-----------------------END OF VAR DECLARATION----------------------//
@@ -147,8 +142,6 @@ VAR_TYPE: 'var';
 //-------------------------------------------------------------------//
 
 funcdecl: 'func' IDENTIFIER OPEN_PARENTHESIS param_decl_list CLOSE_PARENTHESIS newline_list body  newline_list;
-// funcdecl: FUNC IDENTIFIER param_decl newline_list body NEWLINE newline_list;
-// param_decl: OPEN_PARENTHESIS param_decl_list CLOSE_PARENTHESIS;
 
 
 param_decl_list: param_decl_prime | ;
@@ -227,25 +220,8 @@ for_body:
 	NEWLINE
 ;
 
-FOR_STATEMENT: 'for statement';
-BREAK_STATEMENT: 'break';
-CONTINUE_STATEMENT: 'continue';
-
-
-
 break_statement: BREAK_STATEMENT NEWLINE newline_list;
 continue_statement: CONTINUE_STATEMENT NEWLINE newline_list;
-
-FUNC: 'func';
-BEGIN: 'begin';
-END: 'end';
-RETURN: 'return';
-IF: 'if';
-ELIF: 'elif';
-ELSE: 'else';
-FOR: 'for';
-UNTIL: 'until';
-BY: 'by';
 
 //-------------------------------------------------------------------//
 //-------------------------------------------------------------------//
@@ -260,6 +236,30 @@ BY: 'by';
 //-------------------------------LEXER-------------------------------//
 //-------------------------------------------------------------------//
 //-------------------------------------------------------------------//
+
+
+STRING_TYPE: 'string';
+NUMBER_TYPE: 'number';
+DYNAMIC_TYPE: 'dynamic';
+VAR_TYPE: 'var';
+
+
+FOR_STATEMENT: 'for statement';
+BREAK_STATEMENT: 'break';
+CONTINUE_STATEMENT: 'continue';
+
+
+FUNC: 'func';
+BEGIN: 'begin';
+END: 'end';
+RETURN: 'return';
+IF: 'if';
+ELIF: 'elif';
+ELSE: 'else';
+FOR: 'for';
+UNTIL: 'until';
+BY: 'by';
+
 
 //COMMENT
 COMMENT: '##' ~[\r\n]* -> skip;

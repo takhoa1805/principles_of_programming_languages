@@ -4,6 +4,12 @@ from dataclasses import dataclass
 from typing import List, Tuple
 
 
+#THIS IS READ-ONLY FILE
+
+#READ THIS FILE FOR METHOD REFERENCES
+
+#DO NOT MODIFY THIS FILE
+
 class AST(ABC):
     def __eq__(self, other):
         return self.__dict__ == other.__dict__

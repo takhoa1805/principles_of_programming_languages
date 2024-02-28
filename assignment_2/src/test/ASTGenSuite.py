@@ -2,6 +2,7 @@ import unittest
 from TestUtils import TestAST
 from AST import *
 
+#MODIFY THIS FILE TO MAKE TESTCASES
 
 class ASTGenSuite(unittest.TestCase):
     def test_simple_program(self):
