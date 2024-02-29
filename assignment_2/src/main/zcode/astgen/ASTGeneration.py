@@ -135,22 +135,46 @@ class ASTGeneration(ZCodeVisitor):
 
     def visitElif_statement_list(self,ctx:ZCodeParser.Elif_statement_listContext):
         pass
-
+    
+    #elif_statement: ELIF OPEN_PARENTHESIS expression CLOSE_PARENTHESIS if_body;
     def visitElif_statement(self,ctx:ZCodeParser.Elif_statementContext):
         pass
 
+    #else_statement: ELSE if_body |  ;
     def visitElse_statement(self,ctx:ZCodeParser.Else_statementContext):
-        pass
+        if ctx.getChildCount == 0:
+            return []
+        else:
+            return self.visit(ctx.if_body())
 
+    #for_statement: FOR IDENTIFIER UNTIL expression BY expression newline_list for_body;
     def visitFor_statement(self,ctx:ZCodeParser.For_statementContext):
-        pass
+        name = Id(ctx.IDENTIFIER().getText())
+        condExpr = self.visit(ctx.expression(0))
+        updExpr = self.visit(ctx.expression(1))
+        body = self.visit(ctx.for_body())
+        return For(name,condExpr,updExpr,body)
 
+    # for_body: 	
+    # 	statement
+    # 	|
+    # 	statement_block
+    # 	|
+    # 	NEWLINE
+    # ;
     def visitFor_body(self,ctx:ZCodeParser.For_bodyContext):
-        pass
-
+        if ctx.statement():
+            return self.visit(ctx.statement())
+        elif ctx.statement_block:
+            return self.visit(ctx.statement_block())
+        else:
+            return []
+    
+    #break_statement: BREAK_STATEMENT NEWLINE newline_list;
     def visitBreak_statement(self,ctx:ZCodeParser.Break_statementContext):
-        pass
+        return Break()
 
+    #continue_statement: CONTINUE_STATEMENT NEWLINE newline_list;
     def visitContinue_statement(self,ctx:ZCodeParser.Continue_statementContext):
-        pass
+        return Continue()
 
