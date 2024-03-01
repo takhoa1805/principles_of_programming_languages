@@ -97,14 +97,26 @@ class ASTGeneration(ZCodeVisitor):
     def visitNewline_list(self, ctx:ZCodeParser.Newline_listContext):
         pass
 
+    #body: statement_block | ret |  ;
     def visitBody(self,ctx:ZCodeParser.BodyContext):
-        pass
+        if ctx.statement_block():
+            return self.visit(ctx.statement_block())
+        elif ctx.ret():
+            return self.visit(ctx.ret())
+        else:
+            return None
 
+    #statement_block: BEGIN statement_list END NEWLINE newline_list;
     def visitStatement_block(self, ctx: ZCodeParser.Statement_blockContext):
-        pass
+        stmt = self.visit(ctx.statement_list())
+        return Block(stmt)
 
+    #statement_list: newline_list statement newline_list statement_list | newline_list;
     def visitStatement_list(self, ctx:ZCodeParser.Statement_listContext):
-        pass
+        if ctx.getChildCount() == 1:
+            return []
+        else:
+            return [self.visit(ctx.statement())] + self.visit(ctx.statement_list())
     
     # statement: 
     # 	vardecl
@@ -126,7 +138,26 @@ class ASTGeneration(ZCodeVisitor):
     # 	statement_block
     # ;
     def visitStatement(self,ctx:ZCodeParser.StatementContext):
-        pass
+        if ctx.vardecl():
+            return self.visit(ctx.vardecl())
+        elif ctx.assignment_statement():
+            return self.visit(ctx.assignment_statement())
+        elif ctx.if_statement():
+            return self.visit(ctx.if_statement())
+        elif ctx.for_statement():
+            return self.visit(ctx.for_statement())
+        elif ctx.break_statement():
+            return self.visit(ctx.break_statement())
+        elif ctx.continue_statement():
+            return self.visit(ctx.continue_statement())
+        elif ctx.return_statement():
+            return self.visit(ctx.return_statement())
+        elif ctx.func_call_statement():
+            return self.visit(ctx.func_call_statement())
+        elif ctx.statement_block():
+            return self.visit(ctx.statement_block())
+        
+        return None
 
     #ret: RETURN expression | RETURN;
     def visitRet(self,ctx:ZCodeParser.RetContext):

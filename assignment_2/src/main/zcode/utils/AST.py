@@ -44,7 +44,7 @@ class Decl(AST):
     __metaclass__ = ABCMeta
     pass
 
-
+#USED
 class Id(LHS):
     # name: str
     def __init__(self, name):
@@ -93,7 +93,7 @@ class CallExpr(Expr):
     def __str__(self):
         return f"CallExpr({str(self.name)}, [{', '.join(str(i) for i in self.args)}])"
 
-
+#USED => BUT NOT FOR SURE IF THIS'S PUT IN CORRECT PLACE
 class ArrayCell(LHS):
     # arr: Expr
     # idx: List[Expr]
@@ -156,7 +156,7 @@ class Decl(AST):
     __metaclass__ = ABCMeta
     pass
 
-
+#USED
 class Assign(Stmt):
     # lhs: Expr
     # exp: Expr
@@ -168,7 +168,7 @@ class Assign(Stmt):
     def __str__(self):
         return f"AssignStmt({str(self.lhs)}, {str(self.rhs)})"
 
-
+#USED
 class If(Stmt):
     # expr: Expr
     # thenStmt: Stmt
@@ -184,7 +184,7 @@ class If(Stmt):
     def __str__(self):
         return f"If(({str(self.expr)}, {str(self.thenStmt)}), [{', '.join(f'({str(x[0])}, {str(x[1])})' for x in self.elifStmt)}], {str(self.elseStmt) if self.elseStmt else 'None'})"
 
-
+#USED
 class For(Stmt):
     # name: Id
     # condExpr: Expr
@@ -200,17 +200,17 @@ class For(Stmt):
     def __str__(self):
         return f"For({str(self.name)}, {str(self.condExpr)}, {str(self.updExpr)}, {str(self.body)})"
 
-
+#USED
 class Break(Stmt):
     def __str__(self):
         return "Break"
 
-
+#USED
 class Continue(Stmt):
     def __str__(self):
         return "Continue"
 
-
+#USED
 class Return(Stmt):
     # expr: Expr = None  # None if there is no expression after return
 
@@ -232,7 +232,7 @@ class CallStmt(Stmt):
     def __str__(self):
         return f"CallStmt({str(self.name)}, [{', '.join(str(i) for i in self.args)}])"
 
-
+#USED
 class Block(Stmt):
     # stmt: List[Stmt]  # empty list if there is no statement in block
 
