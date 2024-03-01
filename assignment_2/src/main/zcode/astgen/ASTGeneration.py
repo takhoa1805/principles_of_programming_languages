@@ -105,40 +105,105 @@ class ASTGeneration(ZCodeVisitor):
 
     def visitStatement_list(self, ctx:ZCodeParser.Statement_listContext):
         pass
-
+    
+    # statement: 
+    # 	vardecl
+    # 	|
+    # 	assignment_statement 
+    # 	|
+    # 	if_statement 
+    # 	|
+    # 	for_statement 
+    # 	|
+    # 	break_statement 
+    # 	|
+    # 	continue_statement 
+    # 	|
+    # 	return_statement 
+    # 	|
+    # 	func_call_statement 
+    # 	|
+    # 	statement_block
+    # ;
     def visitStatement(self,ctx:ZCodeParser.StatementContext):
         pass
 
+    #ret: RETURN expression | RETURN;
     def visitRet(self,ctx:ZCodeParser.RetContext):
-        pass
+        if ctx.getChildCount() == 1:
+            return Return(None)
+        else:
+            return Return(self.visit(ctx.expression()))
 
+    #return_statement: ret NEWLINE newline_list;
     def visitReturn_statement(self,ctx:ZCodeParser.Return_statementContext):
-        pass
+        return self.visit(ctx.ret())
 
+    #func_call_statement: func_call NEWLINE newline_list;
     def visitFunc_call_statement(self,ctx:ZCodeParser.Func_call_statementContext):
-        pass
+        return self.visit(ctx.func_call())
 
+    #assignment_statement: lhs ASSIGN_OPERATOR rhs NEWLINE newline_list;
     def visitAssignment_statement(self,ctx: ZCodeParser.Assignment_statementContext):
-        pass
+        lhs = self.visit(ctx.lhs())
+        rhs = self.visit(ctx.rhs())
+        return Assign(lhs,rhs)
 
+    # lhs: 
+    # 	IDENTIFIER
+    # 	|
+    # 	expression OPEN_BRACKET index_operators CLOSE_BRACKET
+    # ;
     def visitLhs(self,ctx:ZCodeParser.LhsContext):
-        pass
+        if ctx.IDENTIFIER():
+            return Id(ctx.IDENTIFIER().getText())
+        else:
+            arr = self.visit(ctx.expression())
+            idx = self.visit(ctx.index_operators())
+            return ArrayCell(arr,idx)
 
+    #rhs: expression;
     def visitRhs(self,ctx:ZCodeParser.RhsContext):
-        pass
+        return self.visit(ctx.expression())
 
+    #if_statement: IF OPEN_PARENTHESIS expression CLOSE_PARENTHESIS if_body elif_statement_list else_statement newline_list;
     def visitIf_statement(self,ctx:ZCodeParser.If_statementContext):
-        pass
+        expr = self.visit(ctx.expression())
+        thenStmt = self.visit(ctx.if_body())        
+        elifStmt = self.visit(ctx.elif_statement_list())
+        elseStmt = self.visit(ctx.else_statement())
+        if len(elseStmt) == 0:
+            return If(expr,thenStmt,elifStmt,None)
+        else:
+            return If(expr,thenStmt,elifStmt,elseStmt)
 
+    # if_body:
+    # 	statement
+    # 	|
+    # 	statement_block
+    # 	|
+    # 	NEWLINE
+    # ;
     def visitIf_body(self,ctx:ZCodeParser.If_bodyContext):
-        pass
+        if ctx.statement():
+            return self.visit(ctx.statement())
+        elif ctx.statement_block():
+            return self.visit(ctx.statement_block())
+        else:
+            return []
 
+    #elif_statement_list: elif_statement elif_statement_list |  ;
     def visitElif_statement_list(self,ctx:ZCodeParser.Elif_statement_listContext):
-        pass
+        if ctx.getChildCount() == 0:
+            return []
+        else:
+            return [self.visit(ctx.elif_statement())] + self.visit(ctx.elif_statement_list())
     
     #elif_statement: ELIF OPEN_PARENTHESIS expression CLOSE_PARENTHESIS if_body;
     def visitElif_statement(self,ctx:ZCodeParser.Elif_statementContext):
-        pass
+        expr = self.visit(ctx.expression())
+        stmt = self.visit(ctx.if_body())
+        return (expr,stmt)
 
     #else_statement: ELSE if_body |  ;
     def visitElse_statement(self,ctx:ZCodeParser.Else_statementContext):
