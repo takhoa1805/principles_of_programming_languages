@@ -85,15 +85,44 @@ class ASTGeneration(ZCodeVisitor):
     def visitFuncdecl(self, ctx: ZCodeParser.FuncdeclContext):
         pass
 
+    #param_decl_list: param_decl_prime | ;
     def visitParam_decl_list(self, ctx:ZCodeParser.Param_decl_listContext):
-        pass
+        if ctx.getChildCount() == 0:
+            return []
+        else:
+            return self.visit(ctx.param_decl_prime())
 
+    # param_decl_prime: 
+    # 	param_single_decl COMMA param_decl_prime 
+    # 	| 
+    # 	param_single_decl
+    # ;
     def visitParam_decl_prime(self, ctx:ZCodeParser.Param_decl_primeContext):
-        pass
+        if ctx.getChildCount() == 1:
+            return [self.visit(ctx.param_single_decl())]
+        else:
+            return [self.visit(ctx.param_single_decl())] + self.visit(ctx.param_decl_prime())
 
+    # param_single_decl:
+    # 	//Declaration only
+    # 	typ IDENTIFIER 
+    # 	|
+    # 	//Array declaration only
+    # 	typ IDENTIFIER OPEN_BRACKET arrlist CLOSE_BRACKET 
+    # ;
     def visitParam_single_decl(self, ctx:ZCodeParser.Param_single_declContext):
-        pass
-
+        if ctx.getChildCount() == 2:
+            name = Id(ctx.IDENTIFIER().getText())
+            varType = self.visit(ctx.typ())
+            return VarDecl(name,varType,None,None)
+        else:
+            name = Id(ctx.IDENTIFIER().getText())
+            eleType = self.visit(ctx.typ())
+            size = self.visit(ctx.arrlist())
+            varType = ArrayType(size,eleType)
+            return VarDecl(name,varType,None,None)
+    
+    #SKIP THIS AS PROGRAM IGNORES NEWLINES
     def visitNewline_list(self, ctx:ZCodeParser.Newline_listContext):
         pass
 
