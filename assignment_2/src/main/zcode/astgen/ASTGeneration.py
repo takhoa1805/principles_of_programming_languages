@@ -28,22 +28,117 @@ class ASTGeneration(ZCodeVisitor):
     def visitArrlist_expression(self,ctx:ZCodeParser.Arrlist_expressionContext):
         pass
 
+    # expression: 
+    # 	expression OPEN_BRACKET index_operators CLOSE_BRACKET
+    # 	|
+    # 	OPEN_PARENTHESIS expression CLOSE_PARENTHESIS
+    # 	|
+    # 	<assoc=right>SUB_OPERATOR expression
+    # 	|
+    # 	<assoc=right>NOT_OPERATOR expression
+    # 	|
+    # 	expression mul_operators expression
+    # 	|
+    # 	expression add_operators expression
+    # 	|
+    # 	expression logic_operators expression
+    # 	|
+    # 	expression rel_operators expression
+    # 	|
+    # 	expression str_operators expression
+    # 	|
+    # 	array_expression
+    # 	|
+    # 	func_call
+    # 	|
+    # 	literal
+    # ;
     def visitExpression(self,ctx:ZCodeParser.ExpressionContext):
-        pass
+        if ctx.index_operators():
+            arr = self.visit(ctx.expression())
+            idx = self.visit(index_operators())
+            return ArrayCell(arr,idx)
+        
+        elif ctx.OPEN_PARENTHESIS():
+            return self.visit(ctx.expression())
+        
+        elif ctx.SUB_OPERATOR():
+            op = ctx.SUB_OPERATOR().getText()
+            operand = self.visit(ctx.expression())
+            return UnaryOp(op,operand)
+        
+        elif ctx.NOT_OPERATOR():
+            op = ctx.NOT_OPERATOR().getText()
+            operand = self.visit(ctx.expression())
+            return UnaryOp(op,operand)
+        
+        elif ctx.mul_operators():
+            op = self.visit(ctx.mul_operators())
+            left = self.visit(ctx.expression(0))
+            right = self.visit(ctx.expression(1))
+            return BinaryOp(op,left,right)
+        
+        elif ctx.add_operators():
+            op = self.visit(ctx.add_operators())
+            left = self.visit(ctx.expression(0))
+            right = self.visit(ctx.expression(1))
+            return BinaryOp(op,left,right)
+        
+        elif ctx.logic_operators():
+            op = self.visit(ctx.logic_operators())
+            left = self.visit(ctx.expression(0))
+            right = self.visit(ctx.expression(1))
+            return BinaryOp(op,left,right)
+        
+        elif ctx.rel_operators():
+            op = self.visit(ctx.rel_operators())
+            left = self.visit(ctx.expression(0))
+            right = self.visit(ctx.expression(1))
+            return BinaryOp(op,left,right)
 
+        elif ctx.str_operators():
+            op = self.visit(ctx.str_operators())
+            left = self.visit(ctx.expression(0))
+            right = self.visit(ctx.expression(1))
+            return BinaryOp(op,left,right)
+        
+        elif ctx.array_expression():
+            return self.visit(ctx.array_expression)
+        
+        elif ctx.func_call():
+            return self.visit(ctx.func_call())
+        
+        elif ctx.literal():
+            return self.visit(ctx.literal())
+        
+        else: return None
+
+    #sign_operands: literal | SUB_OPERATOR ;
     def visitSign_operands(self,ctx:ZCodeParser.Sign_operandsContext):
-        pass
+        if ctx.SUB_OPERATOR():
+            return ctx.SUB_OPERATOR().getText()
+        else: return self.visit(ctx.literal())
 
+    #not_operands: literal | NOT_OPERATOR;
     def visitNot_operands(self, ctx:ZCodeParser.Not_operandsContext):
-        pass
+        if ctx.NOT_OPERATOR():
+            return ctx.NOT_OPERATOR().getText()
+        else: return self.visit(ctx.literal())
 
+    #index_operators: expression | expression COMMA index_operators;
     def visitIndex_operators(self,ctx:ZCodeParser.Index_operatorsContext):
-        pass
+        if ctx.getChildCount() == 1:
+            return [self.visit(ctx.expression())]
+        else:
+            return [self.visit(ctx.expression())] + self.visit(ctx.index_operators())
 
+    #func_call: IDENTIFIER OPEN_PARENTHESIS  param_list CLOSE_PARENTHESIS;
     def visitFunc_call(self,ctx: ZCodeParser.Func_callContext):
-        pass
+        name = Id(ctx.IDENTIFIER().getText())
+        args = self.visit(ctx.param_list())
+        return CallStmt(name,args)
 
-    #THIS IS OBSOLETE
+    #THIS IS OBSOLETE   
     def visitSign_operands(self,ctx:ZCodeParser.Sign_operandsContext):
         pass
 
