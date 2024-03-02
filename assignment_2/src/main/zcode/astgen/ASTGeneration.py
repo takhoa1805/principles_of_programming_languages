@@ -43,47 +43,135 @@ class ASTGeneration(ZCodeVisitor):
     def visitFunc_call(self,ctx: ZCodeParser.Func_callContext):
         pass
 
+    #THIS IS OBSOLETE
+    def visitSign_operands(self,ctx:ZCodeParser.Sign_operandsContext):
+        pass
+
+    #param_list: param_prime | ;
     def visitParam_list(self,ctx: ZCodeParser.Param_listContext):
-        pass
+        if ctx.getChildCount() == 0:
+            return []
+        else:
+            return self.visit(ctx.param_prime())
 
+    #param_prime: param COMMA param_prime | param;
     def visitParam_prime(self,ctx: ZCodeParser.Param_primeContext):
-        pass
+        if ctx.getChildCount() == 1:
+            return [self.visit(ctx.param())]
+        else:
+            return [self.visit(ctx.param())] + self.visit(ctx.param_prime())
 
+    #param: expression;
     def visitParam(self,ctx: ZCodeParser.ParamContext):
-        pass
+        return self.visit(ctx.expression())
 
+    #THIS IS OBSOLETE
     def visitNon_rel_operators(self,ctx:ZCodeParser.Non_rel_operatorsContext):
         pass
 
+    #THIS IS OBSOLETE
     def visitNon_str_operators(self,ctx: ZCodeParser.Non_str_operatorsContext):
         pass
 
+    #THIS IS OBSOLETE
     def visitNon_associative_operands(self,ctx: ZCodeParser.Non_associative_operandsContext):
         pass
 
+    #typ: BOOL_TYPE | NUMBER_TYPE | STRING_TYPE;
     def visitTyp(self,ctx:ZCodeParser.TypContext):
-        pass
+        if ctx.BOOL_TYPE():
+            return BoolType()
+        elif ctx.NUMBER_TYPE():
+            return NumberType()
+        elif ctx.STRING_TYPE():
+            return StringType()
+        else: return None
 
+    #literal: STRING | NUMBER | BOOLEAN | IDENTIFIER;
     def visitLiteral(self, ctx: ZCodeParser.LiteralContext):
-        pass
+        if ctx.STRING():
+            return StringLiteral(ctx.STRING().getText())
+        elif ctx.NUMBER():
+            value = float(ctx.NUMBER().getText())
+            return NumberLiteral(value)
+        elif ctx.BOOLEAN():
+            value = ctx.BOOLEAN().getText() == 'true'
+            return BooleanLiteral(value)
+        elif ctx.IDENTIFIER():
+            return Id(ctx.IDENTIFIER().getText())
+        else:
+            return None
 
+    #mul_operators: MUL_OPERATOR | DIV_OPERATOR | MOD_OPERATOR;
     def visitMul_operators(self,ctx: ZCodeParser.Mul_operatorsContext):
-        pass
+        if ctx.MUL_OPERATOR():
+            return ctx.MUL_OPERATOR().getText()
+        elif ctx.DIV_OPERATOR():
+            return ctx.DIV_OPERATOR().getText()
+        elif ctx.MOD_OPERATOR():
+            return ctx.MOD_OPERATOR().getText()
+        else: 
+            return None
 
+    #add_operators: ADD_OPERATOR | SUB_OPERATOR;
     def visitAdd_operators(self,ctx: ZCodeParser.Add_operatorsContext):
-        pass
+        if ctx.ADD_OPERATOR():
+            return ctx.ADD_OPERATOR().getText()
+        elif ctx.SUB_OPERATOR():
+            return ctx.SUB_OPERATOR().getText()
+        else: return None
 
+    #logic_operators: AND_OPERATOR | OR_OPERATOR;   
     def visitLogic_operators(self, ctx: ZCodeParser.Logic_operatorsContext):
-        pass
+        if ctx.OR_OPERATOR():
+            return ctx.OR_OPERATOR().getText()
+        elif ctx.AND_OPERATOR():
+            return ctx.AND_OPERATOR().getText()
+        else: return None
 
+    # rel_operators: 
+    # 	EQ_OPERATOR 
+    # 	| 
+    # 	SEQ_OPERATOR 
+    # 	| 
+    # 	NEQ_OPERATOR 
+    # 	| 
+    # 	LT_OPERATOR
+    # 	|
+    # 	GT_OPERATOR
+    # 	|
+    # 	LEQ_OPERATOR
+    # 	|
+    # 	GEQ_OPERATOR
+    # ;
     def visitRel_operators(self, ctx: ZCodeParser.Rel_operatorsContext):
-        pass
+        if ctx.EQ_OPERATOR():
+            return ctx.EQ_OPERATOR().getText()
+        elif ctx.SEQ_OPERATOR():
+            return ctx.SEQ_OPERATOR().getText()
+        elif ctx.NEQ_OPERATOR():
+            return ctx.NEQ_OPERATOR().getText()
+        elif ctx.LT_OPERATOR():
+            return ctx.LT_OPERATOR().getText()
+        elif ctx.GT_OPERATOR():
+            return ctx.GT_OPERATOR().getText()
+        elif ctx.LEQ_OPERATOR():
+            return ctx.LEQ_OPERATOR().getText()
+        elif ctx.GEQ_OPERATOR():
+            return ctx.GEQ_OPERATOR().getText()
+        else:
+            return None
 
+    #str_operators: STRING_OPERATOR;
     def visitStr_operators(self, ctx: ZCodeParser.Str_operatorsContext):
-        pass
+        return ctx.STRING_OPERATOR()
 
+    #funcdecl: 'func' IDENTIFIER OPEN_PARENTHESIS param_decl_list CLOSE_PARENTHESIS newline_list body  newline_list;
     def visitFuncdecl(self, ctx: ZCodeParser.FuncdeclContext):
-        pass
+        name = Id(ctx.IDENTIFIER().getText())
+        param = self.viit(ctx.param_decl_list())
+        body = self.visit(ctx.body()) if ctx.body() else None
+        return FuncDecl(name,param,body)
 
     #param_decl_list: param_decl_prime | ;
     def visitParam_decl_list(self, ctx:ZCodeParser.Param_decl_listContext):
@@ -209,18 +297,10 @@ class ASTGeneration(ZCodeVisitor):
         rhs = self.visit(ctx.rhs())
         return Assign(lhs,rhs)
 
-    # lhs: 
-    # 	IDENTIFIER
-    # 	|
-    # 	expression OPEN_BRACKET index_operators CLOSE_BRACKET
-    # ;
+    # lhs: expression;
     def visitLhs(self,ctx:ZCodeParser.LhsContext):
-        if ctx.IDENTIFIER():
-            return Id(ctx.IDENTIFIER().getText())
-        else:
-            arr = self.visit(ctx.expression())
-            idx = self.visit(ctx.index_operators())
-            return ArrayCell(arr,idx)
+        return self.visit(ctx.expression())
+
 
     #rhs: expression;
     def visitRhs(self,ctx:ZCodeParser.RhsContext):
@@ -232,10 +312,7 @@ class ASTGeneration(ZCodeVisitor):
         thenStmt = self.visit(ctx.if_body())        
         elifStmt = self.visit(ctx.elif_statement_list())
         elseStmt = self.visit(ctx.else_statement())
-        if len(elseStmt) == 0:
-            return If(expr,thenStmt,elifStmt,None)
-        else:
-            return If(expr,thenStmt,elifStmt,elseStmt)
+        return If(expr,thenStmt,elifStmt,elseStmt)
 
     # if_body:
     # 	statement
@@ -250,7 +327,7 @@ class ASTGeneration(ZCodeVisitor):
         elif ctx.statement_block():
             return self.visit(ctx.statement_block())
         else:
-            return []
+            return None
 
     #elif_statement_list: elif_statement elif_statement_list |  ;
     def visitElif_statement_list(self,ctx:ZCodeParser.Elif_statement_listContext):
@@ -267,8 +344,8 @@ class ASTGeneration(ZCodeVisitor):
 
     #else_statement: ELSE if_body |  ;
     def visitElse_statement(self,ctx:ZCodeParser.Else_statementContext):
-        if ctx.getChildCount == 0:
-            return []
+        if ctx.getChildCount() == 0:
+            return None
         else:
             return self.visit(ctx.if_body())
 
@@ -290,10 +367,10 @@ class ASTGeneration(ZCodeVisitor):
     def visitFor_body(self,ctx:ZCodeParser.For_bodyContext):
         if ctx.statement():
             return self.visit(ctx.statement())
-        elif ctx.statement_block:
+        elif ctx.statement_block():
             return self.visit(ctx.statement_block())
         else:
-            return []
+            return None
     
     #break_statement: BREAK_STATEMENT NEWLINE newline_list;
     def visitBreak_statement(self,ctx:ZCodeParser.Break_statementContext):

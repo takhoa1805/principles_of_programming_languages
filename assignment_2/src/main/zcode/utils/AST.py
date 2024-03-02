@@ -110,7 +110,7 @@ class Literal(Expr):
     __metaclass__ = ABCMeta
     pass
 
-
+#USED
 class NumberLiteral(Literal):
     # value: float
 
@@ -120,7 +120,7 @@ class NumberLiteral(Literal):
     def __str__(self):
         return f"NumLit({str(self.value)})"
 
-
+#USED
 class StringLiteral(Literal):
     # value: str
 
@@ -130,7 +130,7 @@ class StringLiteral(Literal):
     def __str__(self):
         return f"StringLit({self.value})"
 
-
+#USED
 class BooleanLiteral(Literal):
     # value: bool
 
@@ -242,7 +242,7 @@ class Block(Stmt):
     def __str__(self):
         return f"Block([{', '.join(str(i) for i in self.stmt)}])"
 
-
+#USED
 # used for variable or parameter declaration
 class VarDecl(Decl, Stmt):
     # name: Id
@@ -274,22 +274,22 @@ class FuncDecl(Decl):
     def __str__(self):
         return f"FuncDecl({str(self.name)}, [{', '.join(str(i) for i in self.param)}], {str(self.body) if self.body else 'None'})"
 
-
+#USED
 class NumberType(Type):
     def __str__(self):
         return "NumberType"
 
-
+#USED
 class BoolType(Type):
     def __str__(self):
         return "BoolType"
 
-
+#USED
 class StringType(Type):
     def __str__(self):
         return "StringType"
 
-
+#USED
 class ArrayType(Type):
     # size: List[float]
     # eleType: Type

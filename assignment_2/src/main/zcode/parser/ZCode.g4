@@ -78,9 +78,7 @@ index_operators: expression | expression COMMA index_operators;
 func_call: IDENTIFIER OPEN_PARENTHESIS  param_list CLOSE_PARENTHESIS;
 param_list: param_prime | ;
 param_prime: param COMMA param_prime | param;
-param: 
-	expression
-;
+param: expression;
 non_rel_operators: mul_operators | add_operators | logic_operators |str_operators;
 non_str_operators: mul_operators | add_operators | logic_operators |rel_operators;
 
@@ -188,11 +186,7 @@ return_statement: ret NEWLINE newline_list;
 func_call_statement: func_call NEWLINE newline_list;
 
 assignment_statement: lhs ASSIGN_OPERATOR rhs NEWLINE newline_list;
-lhs: 
-	IDENTIFIER
-	|
-	expression OPEN_BRACKET index_operators CLOSE_BRACKET
-;
+lhs: expression;
 rhs: expression;
 
 // if_statement: IF OPEN_PARENTHESIS expression CLOSE_PARENTHESIS if_body elif_statement_list else_statement NEWLINE newline_list;
