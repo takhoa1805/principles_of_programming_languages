@@ -19,12 +19,20 @@ class ASTGeneration(ZCodeVisitor):
     def visitVardecl(self,ctx:ZCodeParser.VardeclContext):
         pass
 
+    #arrlist: NUMBER COMMA arrlist | NUMBER;
     def visitArrlist(self, ctx:ZCodeParser.ArrlistContext):
-        pass
+        if ctx.getChildCount() == 1:
+            value = float(ctx.NUMBER().getText())
+            return [NumberLiteral(value)]
+        else:
+            value = float(ctx.NUMBER().getText())
+            return [NumberLiteral(value)] + self.visit(ctx.arrlist())
 
+    #array_expression: OPEN_BRACKET arrlist CLOSE_BRACKET | arrlist;
     def visitArray_expression(self,ctx:ZCodeParser.Array_expressionContext):
         pass
 
+    #arrlist_expression: OPEN_BRACKET array_expression COMMA arrlist_expression CLOSE_BRACKET | array_expression;
     def visitArrlist_expression(self,ctx:ZCodeParser.Arrlist_expressionContext):
         pass
 
@@ -49,7 +57,7 @@ class ASTGeneration(ZCodeVisitor):
     # 	|
     # 	array_expression
     # 	|
-    # 	func_call
+    # 	IDENTIFIER OPEN_PARENTHESIS  param_list CLOSE_PARENTHESIS
     # 	|
     # 	literal
     # ;
@@ -103,10 +111,12 @@ class ASTGeneration(ZCodeVisitor):
             return BinaryOp(op,left,right)
         
         elif ctx.array_expression():
-            return self.visit(ctx.array_expression)
+            return self.visit(ctx.array_expression())
         
-        elif ctx.func_call():
-            return self.visit(ctx.func_call())
+        elif ctx.param_list():
+            name = Id(ctx.IDENTIFIER().getText())
+            args = self.visit(ctx.param_list())
+            return CallExpr(name,args)
         
         elif ctx.literal():
             return self.visit(ctx.literal())
@@ -138,10 +148,6 @@ class ASTGeneration(ZCodeVisitor):
         args = self.visit(ctx.param_list())
         return CallStmt(name,args)
 
-    #THIS IS OBSOLETE   
-    def visitSign_operands(self,ctx:ZCodeParser.Sign_operandsContext):
-        pass
-
     #param_list: param_prime | ;
     def visitParam_list(self,ctx: ZCodeParser.Param_listContext):
         if ctx.getChildCount() == 0:
@@ -162,15 +168,15 @@ class ASTGeneration(ZCodeVisitor):
 
     #THIS IS OBSOLETE
     def visitNon_rel_operators(self,ctx:ZCodeParser.Non_rel_operatorsContext):
-        pass
+        return None
 
     #THIS IS OBSOLETE
     def visitNon_str_operators(self,ctx: ZCodeParser.Non_str_operatorsContext):
-        pass
+        return None
 
     #THIS IS OBSOLETE
     def visitNon_associative_operands(self,ctx: ZCodeParser.Non_associative_operandsContext):
-        pass
+        return None
 
     #typ: BOOL_TYPE | NUMBER_TYPE | STRING_TYPE;
     def visitTyp(self,ctx:ZCodeParser.TypContext):
@@ -392,10 +398,13 @@ class ASTGeneration(ZCodeVisitor):
         rhs = self.visit(ctx.rhs())
         return Assign(lhs,rhs)
 
-    # lhs: expression;
+    # lhs: 
+    # 	IDENTIFIER
+    # 	|
+    # 	array_element
+    # ;
     def visitLhs(self,ctx:ZCodeParser.LhsContext):
-        return self.visit(ctx.expression())
-
+        pass
 
     #rhs: expression;
     def visitRhs(self,ctx:ZCodeParser.RhsContext):

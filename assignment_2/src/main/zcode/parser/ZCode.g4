@@ -67,7 +67,7 @@ expression:
 	|
 	array_expression
 	|
-	func_call
+	IDENTIFIER OPEN_PARENTHESIS  param_list CLOSE_PARENTHESIS
 	|
 	literal
 	
@@ -186,7 +186,11 @@ return_statement: ret NEWLINE newline_list;
 func_call_statement: func_call NEWLINE newline_list;
 
 assignment_statement: lhs ASSIGN_OPERATOR rhs NEWLINE newline_list;
-lhs: expression;
+lhs: 
+	IDENTIFIER
+	|
+	array_element
+;
 rhs: expression;
 
 // if_statement: IF OPEN_PARENTHESIS expression CLOSE_PARENTHESIS if_body elif_statement_list else_statement NEWLINE newline_list;
