@@ -7,21 +7,62 @@ from AST import *
 
 class ASTGeneration(ZCodeVisitor):
 
+    #program: newline_list decllist EOF;
     def visitProgram(self, ctx: ZCodeParser.ProgramContext):
-        return Program([VarDecl(Id(ctx.IDENTIFIER().getText()), NumberType())])
+        decl = self.visit(ctx.decllist())
+        return Program(decl)
     
+    #decllist:  decl decllist | decl ;   
     def visitDecllist(self,ctx: ZCodeParser.DecllistContext):
-        pass
+        if ctx.getChildCount() == 1:
+            return [self.visit(ctx.decl())]
+        else:
+            return [self.visit(ctx.decl())] + self.visit(ctx.decllist())
 
+    #decl: vardecl | funcdecl ;
     def visitDecl(self, ctx: ZCodeParser.DeclContext):
-        pass
+        if ctx.vardecl():
+            return self.visit(ctx.vardecl())
+        elif ctx.funcdecl():
+            return self.visit(ctx.funcdecl())
+        else: return None
 
     # vardecl: 
-    # 	//Declaration only
+    # 	vardecl_only
+    # 	|
+    # 	vardecl_init
+    # ;
+    def visitVardecl(self,ctx:ZCodeParser.VardeclContext):
+        if ctx.vardecl_only():
+            return self.visit(ctx.vardecl_only())
+        elif ctx.vardecl_init():
+            return self.visit(ctx.vardecl_init())
+        else: return None
+
+    # vardecl_only:	
     # 	typ IDENTIFIER NEWLINE newline_list
     # 	|
     # 	DYNAMIC_TYPE IDENTIFIER NEWLINE newline_list
     # 	|
+    # 	typ IDENTIFIER OPEN_BRACKET arrlist CLOSE_BRACKET NEWLINE newline_list
+    # ;
+    def visitVardecl_only(self,ctx:ZCodeParser.Vardecl_onlyContext):
+        if ctx.OPEN_BRACKET():
+            name = Id(ctx.IDENTIFIER().getText())
+            size = self.visit(ctx.arrlist())
+            eleType = self.visit(ctx.typ())
+            varType = ArrayType(size,eleType)
+            return VarDecl(name,varType,None,None)
+        elif ctx.DYNAMIC_TYPE():
+            name = Id(ctx.IDENTIFIER().getText())
+            modifier = ctx.DYNAMIC_TYPE().getText()
+            return VarDecl(name,None,modifier,None)
+        else:
+            name = Id(ctx.IDENTIFIER().getText())
+            varType = self.visit(ctx.typ())
+            return VarDecl(name,varType,None,None)
+
+    # vardecl_init:
     # 	//Declaration with initialization value
     # 	VAR_TYPE IDENTIFIER ASSIGN_OPERATOR expression NEWLINE newline_list
     # 	|
@@ -29,20 +70,32 @@ class ASTGeneration(ZCodeVisitor):
     # 	|
     # 	DYNAMIC_TYPE IDENTIFIER ASSIGN_OPERATOR expression NEWLINE newline_list
     # 	|
-    # 	//Array declaration only
-    # 	typ IDENTIFIER OPEN_BRACKET arrlist CLOSE_BRACKET NEWLINE newline_list
-    # 	|
     # 	//Array declaration with initialization values
     # 	typ IDENTIFIER OPEN_BRACKET arrlist CLOSE_BRACKET ASSIGN_OPERATOR expression NEWLINE newline_list
     # ;
-    def visitVardecl(self,ctx:ZCodeParser.VardeclContext):
-        pass
-
-    def visitVardecl_only(self,ctx:ZCodeParser.Vardecl_onlyContext):
-        pass
-
     def visitVardecl_init(self,ctx:ZCodeParser.Vardecl_initContext):
-        pass
+        if ctx.arrlist():
+            name = Id(ctx.IDENTIFIER().getText())
+            size = self.visit(ctx.arrlist())
+            eleType = self.visit(ctx.typ())
+            varType = ArrayType(size,eleType)
+            varInit = self.visit(ctx.expression())
+            return VarDecl(name,varType,None,varInit)
+        elif ctx.DYNAMIC_TYPE():
+            name = Id(ctx.IDENTIFIER().getText())
+            modifier = ctx.DYNAMIC_TYPE().getText()
+            varInit = self.visit(ctx.expression())
+            return VarDecl(name,None,modifier,varInit)
+        elif ctx.VAR_TYPE():
+            name = Id(ctx.IDENTIFIER().getText())
+            modifier = ctx.VAR_TYPE().getText()
+            varInit = self.visit(ctx.expression())
+            return VarDecl(name,None,modifier,varInit)
+        else:
+            name = Id(ctx.IDENTIFIER().getText())
+            varType = self.visit(ctx.typ())
+            varInit = self.visit(ctx.expression())
+            return VarDecl(name,varType,None,varInit)
 
     #arrlist: NUMBER COMMA arrlist | NUMBER;
     def visitArrlist(self, ctx:ZCodeParser.ArrlistContext):
