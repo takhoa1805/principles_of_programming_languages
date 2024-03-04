@@ -21,11 +21,18 @@ decl: vardecl | funcdecl ;
 //-------------------------------------------------------------------//
 //-------------------------------------------------------------------//
 vardecl: 
-	//Declaration only
+	vardecl_only
+	|
+	vardecl_init
+;
+vardecl_only:	
 	typ IDENTIFIER NEWLINE newline_list
 	|
 	DYNAMIC_TYPE IDENTIFIER NEWLINE newline_list
 	|
+	typ IDENTIFIER OPEN_BRACKET arrlist CLOSE_BRACKET NEWLINE newline_list
+;
+vardecl_init:
 	//Declaration with initialization value
 	VAR_TYPE IDENTIFIER ASSIGN_OPERATOR expression NEWLINE newline_list
 	|
@@ -33,15 +40,15 @@ vardecl:
 	|
 	DYNAMIC_TYPE IDENTIFIER ASSIGN_OPERATOR expression NEWLINE newline_list
 	|
-	//Array declaration only
-	typ IDENTIFIER OPEN_BRACKET arrlist CLOSE_BRACKET NEWLINE newline_list
-	|
 	//Array declaration with initialization values
 	typ IDENTIFIER OPEN_BRACKET arrlist CLOSE_BRACKET ASSIGN_OPERATOR expression NEWLINE newline_list
 ;
+
 arrlist: NUMBER COMMA arrlist | NUMBER;
 array_expression: OPEN_BRACKET arrlist CLOSE_BRACKET | arrlist;
 arrlist_expression: OPEN_BRACKET array_expression COMMA arrlist_expression CLOSE_BRACKET | array_expression;
+array_literal: OPEN_BRACKET array_literal_prime CLOSE_BRACKET | OPEN_BRACKET CLOSE_BRACKET;
+array_literal_prime: expression COMMA array_literal_prime | expression;
 expression: 
 	expression OPEN_BRACKET index_operators CLOSE_BRACKET
 	|
@@ -56,21 +63,16 @@ expression:
 	expression add_operators expression
 	|
 	expression logic_operators expression
-	// |
-	// non_associative_operands rel_operators non_associative_operands ===> FOR SEMANTIC STEP?
 	|
 	expression rel_operators expression
-	// |
-	// non_associative_operands str_operators non_associative_operands ===> FOR SEMANTIC STEP?
 	|
 	expression str_operators expression
-	|
-	array_expression
 	|
 	IDENTIFIER OPEN_PARENTHESIS  param_list CLOSE_PARENTHESIS
 	|
 	literal
-	
+	|
+	array_literal
 ;
 sign_operands: literal | SUB_OPERATOR ;
 not_operands: literal | NOT_OPERATOR;
@@ -186,11 +188,7 @@ return_statement: ret NEWLINE newline_list;
 func_call_statement: func_call NEWLINE newline_list;
 
 assignment_statement: lhs ASSIGN_OPERATOR rhs NEWLINE newline_list;
-lhs: 
-	IDENTIFIER
-	|
-	array_element
-;
+lhs: expression;
 rhs: expression;
 
 // if_statement: IF OPEN_PARENTHESIS expression CLOSE_PARENTHESIS if_body elif_statement_list else_statement NEWLINE newline_list;

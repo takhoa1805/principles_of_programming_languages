@@ -16,7 +16,32 @@ class ASTGeneration(ZCodeVisitor):
     def visitDecl(self, ctx: ZCodeParser.DeclContext):
         pass
 
+    # vardecl: 
+    # 	//Declaration only
+    # 	typ IDENTIFIER NEWLINE newline_list
+    # 	|
+    # 	DYNAMIC_TYPE IDENTIFIER NEWLINE newline_list
+    # 	|
+    # 	//Declaration with initialization value
+    # 	VAR_TYPE IDENTIFIER ASSIGN_OPERATOR expression NEWLINE newline_list
+    # 	|
+    # 	typ IDENTIFIER ASSIGN_OPERATOR expression NEWLINE newline_list
+    # 	|
+    # 	DYNAMIC_TYPE IDENTIFIER ASSIGN_OPERATOR expression NEWLINE newline_list
+    # 	|
+    # 	//Array declaration only
+    # 	typ IDENTIFIER OPEN_BRACKET arrlist CLOSE_BRACKET NEWLINE newline_list
+    # 	|
+    # 	//Array declaration with initialization values
+    # 	typ IDENTIFIER OPEN_BRACKET arrlist CLOSE_BRACKET ASSIGN_OPERATOR expression NEWLINE newline_list
+    # ;
     def visitVardecl(self,ctx:ZCodeParser.VardeclContext):
+        pass
+
+    def visitVardecl_only(self,ctx:ZCodeParser.Vardecl_onlyContext):
+        pass
+
+    def visitVardecl_init(self,ctx:ZCodeParser.Vardecl_initContext):
         pass
 
     #arrlist: NUMBER COMMA arrlist | NUMBER;
@@ -28,13 +53,30 @@ class ASTGeneration(ZCodeVisitor):
             value = float(ctx.NUMBER().getText())
             return [NumberLiteral(value)] + self.visit(ctx.arrlist())
 
+    #OBSOLETE
     #array_expression: OPEN_BRACKET arrlist CLOSE_BRACKET | arrlist;
     def visitArray_expression(self,ctx:ZCodeParser.Array_expressionContext):
-        pass
+        return None
 
+    #OBSOLETE
     #arrlist_expression: OPEN_BRACKET array_expression COMMA arrlist_expression CLOSE_BRACKET | array_expression;
     def visitArrlist_expression(self,ctx:ZCodeParser.Arrlist_expressionContext):
-        pass
+        return None
+
+    #array_literal: OPEN_BRACKET array_literal_prime CLOSE_BRACKET | OPEN_BRACKET CLOSE_BRACKET;
+    def visitArray_literal(self,ctx:ZCodeParser.Array_literalContext):
+        if ctx.array_literal_prime():
+            value = self.visit(ctx.array_literal_prime())
+            return ArrayLiteral(value)
+        else:
+            return ArrayLiteral([])
+
+    #array_literal_prime: expression COMMA array_literal_prime | expression;
+    def visitArray_literal_prime(self,ctx:ZCodeParser.Array_literal_primeContext):
+        if ctx.getChildCount() == 1:
+            return [self.visit(ctx.expression())]
+        else:
+            return [self.visit(ctx.expression())] + self.visit(ctx.array_literal_prime())
 
     # expression: 
     # 	expression OPEN_BRACKET index_operators CLOSE_BRACKET
@@ -55,11 +97,11 @@ class ASTGeneration(ZCodeVisitor):
     # 	|
     # 	expression str_operators expression
     # 	|
-    # 	array_expression
-    # 	|
     # 	IDENTIFIER OPEN_PARENTHESIS  param_list CLOSE_PARENTHESIS
     # 	|
     # 	literal
+    #   |
+    #   array_literal
     # ;
     def visitExpression(self,ctx:ZCodeParser.ExpressionContext):
         if ctx.index_operators():
@@ -398,13 +440,9 @@ class ASTGeneration(ZCodeVisitor):
         rhs = self.visit(ctx.rhs())
         return Assign(lhs,rhs)
 
-    # lhs: 
-    # 	IDENTIFIER
-    # 	|
-    # 	array_element
-    # ;
+    # lhs: expression;
     def visitLhs(self,ctx:ZCodeParser.LhsContext):
-        pass
+        return self.visit(ctx.expression())
 
     #rhs: expression;
     def visitRhs(self,ctx:ZCodeParser.RhsContext):
