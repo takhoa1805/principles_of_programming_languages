@@ -101,10 +101,10 @@ class ASTGeneration(ZCodeVisitor):
     def visitArrlist(self, ctx:ZCodeParser.ArrlistContext):
         if ctx.getChildCount() == 1:
             value = float(ctx.NUMBER().getText())
-            return [NumberLiteral(value)]
+            return [value]
         else:
             value = float(ctx.NUMBER().getText())
-            return [NumberLiteral(value)] + self.visit(ctx.arrlist())
+            return [value] + self.visit(ctx.arrlist())
 
     #OBSOLETE
     #array_expression: OPEN_BRACKET arrlist CLOSE_BRACKET | arrlist;
@@ -153,8 +153,8 @@ class ASTGeneration(ZCodeVisitor):
     # 	IDENTIFIER OPEN_PARENTHESIS  param_list CLOSE_PARENTHESIS
     # 	|
     # 	literal
-    #   |
-    #   array_literal
+    # 	|
+    # 	array_literal
     # ;
     def visitExpression(self,ctx:ZCodeParser.ExpressionContext):
         if ctx.index_operators():
@@ -204,9 +204,6 @@ class ASTGeneration(ZCodeVisitor):
             left = self.visit(ctx.expression(0))
             right = self.visit(ctx.expression(1))
             return BinaryOp(op,left,right)
-        
-        elif ctx.array_expression():
-            return self.visit(ctx.array_expression())
         
         elif ctx.param_list():
             name = Id(ctx.IDENTIFIER().getText())
@@ -365,7 +362,7 @@ class ASTGeneration(ZCodeVisitor):
     #funcdecl: 'func' IDENTIFIER OPEN_PARENTHESIS param_decl_list CLOSE_PARENTHESIS newline_list body  newline_list;
     def visitFuncdecl(self, ctx: ZCodeParser.FuncdeclContext):
         name = Id(ctx.IDENTIFIER().getText())
-        param = self.viit(ctx.param_decl_list())
+        param = self.visit(ctx.param_decl_list())
         body = self.visit(ctx.body()) if ctx.body() else None
         return FuncDecl(name,param,body)
 
