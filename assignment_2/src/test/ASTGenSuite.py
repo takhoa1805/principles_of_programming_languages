@@ -178,7 +178,10 @@ class ASTGenSuite(unittest.TestCase):
             var x <- 1 and 2 or 3
             var x <- 1 + 2 - 3
             var x <- 1 * 2 / 3 % 4
+            var x <- ---1
+            var x <- not not 1
             var x <- x 
+            var x <- a[1,2,3]
         """
         expect = str(Program([
                     VarDecl(Id("x"), None, "var",  BinaryOp("...", NumberLiteral(1.0), StringLiteral("2"))),
@@ -186,7 +189,10 @@ class ASTGenSuite(unittest.TestCase):
                     VarDecl(Id("x"), None, "var",  BinaryOp("or", BinaryOp("and", NumberLiteral(1.0), NumberLiteral(2.0)), NumberLiteral(3.0))),
                     VarDecl(Id("x"), None, "var",  BinaryOp("-", BinaryOp("+", NumberLiteral(1.0), NumberLiteral(2.0)), NumberLiteral(3.0))),
                     VarDecl(Id("x"), None, "var",  BinaryOp("%", BinaryOp("/", BinaryOp("*", NumberLiteral(1.0), NumberLiteral(2.0)), NumberLiteral(3.0)), NumberLiteral(4.0))),
-                    VarDecl(Id("x"), None, "var",  Id("x"))
+                    VarDecl(Id("x"), None, "var",  UnaryOp("-", UnaryOp("-", UnaryOp("-", NumberLiteral(1.0))))),
+                    VarDecl(Id("x"), None, "var",  UnaryOp("not", UnaryOp("not", NumberLiteral(1.0)))),
+                    VarDecl(Id("x"), None, "var",  Id("x")),
+                    VarDecl(Id("x"), None, "var",  ArrayCell(Id("a"), [NumberLiteral(1.0), NumberLiteral(2.0), NumberLiteral(3.0)]))
                 ]))
         #print(expect)
         self.assertTrue(TestAST.test(input, expect, 315))  

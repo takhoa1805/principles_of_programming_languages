@@ -23,9 +23,8 @@ class ASTGeneration(ZCodeVisitor):
     def visitDecl(self, ctx: ZCodeParser.DeclContext):
         if ctx.vardecl():
             return self.visit(ctx.vardecl())
-        elif ctx.funcdecl():
+        else:
             return self.visit(ctx.funcdecl())
-        else: return None
 
     # vardecl: 
     # 	vardecl_only
@@ -35,9 +34,8 @@ class ASTGeneration(ZCodeVisitor):
     def visitVardecl(self,ctx:ZCodeParser.VardeclContext):
         if ctx.vardecl_only():
             return self.visit(ctx.vardecl_only())
-        elif ctx.vardecl_init():
+        else:
             return self.visit(ctx.vardecl_init())
-        else: return None
 
     # vardecl_only:	
     # 	typ IDENTIFIER NEWLINE newline_list
@@ -134,9 +132,9 @@ class ASTGeneration(ZCodeVisitor):
     # expression: 
     # 	expression OPEN_BRACKET index_operators CLOSE_BRACKET	
     #   |
-    #   IDENTIFIER OPEN_BRACKET index_operators CLOSE_BRACKET
+    #   //DENTIFIER OPEN_BRACKET index_operators CLOSE_BRACKET
     #   |
-    #   func_call OPEN_BRACKET index_operators CLOSE_BRACKET
+    #   //func_call OPEN_BRACKET index_operators CLOSE_BRACKET
     # 	|
     # 	OPEN_PARENTHESIS expression CLOSE_PARENTHESIS
     # 	|
@@ -162,54 +160,42 @@ class ASTGeneration(ZCodeVisitor):
     # ;
     def visitExpression(self,ctx:ZCodeParser.ExpressionContext):
         if ctx.index_operators():
-            arr = self.visit(ctx.expression())
-            idx = self.visit(index_operators())
+            arr = self.visit(ctx.expression(0))
+            idx = self.visit(ctx.index_operators())
             # print("expression with index operators is called")
             return ArrayCell(arr,idx)
         
         elif ctx.OPEN_PARENTHESIS():
-            return self.visit(ctx.expression())
+            return self.visit(ctx.expression(0))
         
         elif ctx.SUB_OPERATOR():
             op = ctx.SUB_OPERATOR().getText()
-            print("unary op is called" + op)
-            operand = self.visit(ctx.expression())
-            return UnaryOp(op,operand)
+            # print("unary op is called" + op)
+            return UnaryOp(op,self.visit(ctx.expression(0)))
         
         elif ctx.NOT_OPERATOR():
             op = ctx.NOT_OPERATOR().getText()
-            operand = self.visit(ctx.expression())
-            return UnaryOp(op,operand)
+            return UnaryOp(op,self.visit(ctx.expression(0)))
         
         elif ctx.mul_operators():
             op = self.visit(ctx.mul_operators())
-            left = self.visit(ctx.expression(0))
-            right = self.visit(ctx.expression(1))
-            return BinaryOp(op,left,right)
+            return BinaryOp(op,self.visit(ctx.expression(0)),self.visit(ctx.expression(1)))
         
         elif ctx.add_operators():
             op = self.visit(ctx.add_operators())
-            left = self.visit(ctx.expression(0))
-            right = self.visit(ctx.expression(1))
-            return BinaryOp(op,left,right)
+            return BinaryOp(op,self.visit(ctx.expression(0)),self.visit(ctx.expression(1)))
         
         elif ctx.logic_operators():
             op = self.visit(ctx.logic_operators())
-            left = self.visit(ctx.expression(0))
-            right = self.visit(ctx.expression(1))
-            return BinaryOp(op,left,right)
+            return BinaryOp(op,self.visit(ctx.expression(0)),self.visit(ctx.expression(1)))
         
         elif ctx.rel_operators():
             op = self.visit(ctx.rel_operators())
-            left = self.visit(ctx.expression(0))
-            right = self.visit(ctx.expression(1))
-            return BinaryOp(op,left,right)
+            return BinaryOp(op,self.visit(ctx.expression(0)),self.visit(ctx.expression(1)))
 
         elif ctx.str_operators():
             op = self.visit(ctx.str_operators())
-            left = self.visit(ctx.expression(0))
-            right = self.visit(ctx.expression(1))
-            return BinaryOp(op,left,right)
+            return BinaryOp(op,self.visit(ctx.expression(0)),self.visit(ctx.expression(1)))
         
         elif ctx.param_list():
             name = Id(ctx.IDENTIFIER().getText())
@@ -219,11 +205,13 @@ class ASTGeneration(ZCodeVisitor):
         elif ctx.literal():
             return self.visit(ctx.literal())
         
-        elif ctx.array_literal():
-            # print("array literal is called")
+        # elif ctx.array_literal():
+        #     # print("array literal is called")
+        #     return self.visit(ctx.array_literal())
+
+        else:        
             return self.visit(ctx.array_literal())
-        
-        else: return None
+
 
     #sign_operands: literal | SUB_OPERATOR ;
     def visitSign_operands(self,ctx:ZCodeParser.Sign_operandsContext):
@@ -286,9 +274,8 @@ class ASTGeneration(ZCodeVisitor):
             return BoolType()
         elif ctx.NUMBER_TYPE():
             return NumberType()
-        elif ctx.STRING_TYPE():
+        else:
             return StringType()
-        else: return None
 
     #literal: STRING | NUMBER | BOOLEAN | IDENTIFIER;
     def visitLiteral(self, ctx: ZCodeParser.LiteralContext):
@@ -300,10 +287,8 @@ class ASTGeneration(ZCodeVisitor):
         elif ctx.BOOLEAN():
             value = ctx.BOOLEAN().getText() == 'true'
             return BooleanLiteral(value)
-        elif ctx.IDENTIFIER():
-            return Id(ctx.IDENTIFIER().getText())
         else:
-            return None
+            return Id(ctx.IDENTIFIER().getText())
 
     #mul_operators: MUL_OPERATOR | DIV_OPERATOR | MOD_OPERATOR;
     def visitMul_operators(self,ctx: ZCodeParser.Mul_operatorsContext):
@@ -311,26 +296,22 @@ class ASTGeneration(ZCodeVisitor):
             return ctx.MUL_OPERATOR().getText()
         elif ctx.DIV_OPERATOR():
             return ctx.DIV_OPERATOR().getText()
-        elif ctx.MOD_OPERATOR():
+        else:
             return ctx.MOD_OPERATOR().getText()
-        else: 
-            return None
 
     #add_operators: ADD_OPERATOR | SUB_OPERATOR;
     def visitAdd_operators(self,ctx: ZCodeParser.Add_operatorsContext):
         if ctx.ADD_OPERATOR():
             return ctx.ADD_OPERATOR().getText()
-        elif ctx.SUB_OPERATOR():
+        else:
             return ctx.SUB_OPERATOR().getText()
-        else: return None
 
     #logic_operators: AND_OPERATOR | OR_OPERATOR;   
     def visitLogic_operators(self, ctx: ZCodeParser.Logic_operatorsContext):
         if ctx.OR_OPERATOR():
             return ctx.OR_OPERATOR().getText()
-        elif ctx.AND_OPERATOR():
+        else: 
             return ctx.AND_OPERATOR().getText()
-        else: return None
 
     # rel_operators: 
     # 	EQ_OPERATOR 
@@ -360,10 +341,8 @@ class ASTGeneration(ZCodeVisitor):
             return ctx.GT_OPERATOR().getText()
         elif ctx.LEQ_OPERATOR():
             return ctx.LEQ_OPERATOR().getText()
-        elif ctx.GEQ_OPERATOR():
-            return ctx.GEQ_OPERATOR().getText()
         else:
-            return None
+            return ctx.GEQ_OPERATOR().getText()
 
     #str_operators: STRING_OPERATOR;
     def visitStr_operators(self, ctx: ZCodeParser.Str_operatorsContext):
@@ -421,10 +400,8 @@ class ASTGeneration(ZCodeVisitor):
     def visitBody(self,ctx:ZCodeParser.BodyContext):
         if ctx.statement_block():
             return self.visit(ctx.statement_block())
-        elif ctx.ret():
+        else: 
             return self.visit(ctx.ret())
-        else:
-            return None
 
     #statement_block: BEGIN statement_list END NEWLINE newline_list;
     def visitStatement_block(self, ctx: ZCodeParser.Statement_blockContext):
@@ -474,10 +451,8 @@ class ASTGeneration(ZCodeVisitor):
             return self.visit(ctx.return_statement())
         elif ctx.func_call_statement():
             return self.visit(ctx.func_call_statement())
-        elif ctx.statement_block():
-            return self.visit(ctx.statement_block())
-        
-        return None
+        else:
+            return self.visit(ctx.statement_block())        
 
     #ret: RETURN expression | RETURN;
     def visitRet(self,ctx:ZCodeParser.RetContext):
