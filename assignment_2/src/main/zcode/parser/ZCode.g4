@@ -50,7 +50,11 @@ arrlist_expression: OPEN_BRACKET array_expression COMMA arrlist_expression CLOSE
 array_literal: OPEN_BRACKET array_literal_prime CLOSE_BRACKET | OPEN_BRACKET CLOSE_BRACKET;
 array_literal_prime: expression COMMA array_literal_prime | expression;
 expression: 
-	expression OPEN_BRACKET index_operators CLOSE_BRACKET
+    expression OPEN_BRACKET index_operators CLOSE_BRACKET
+	// |
+	// IDENTIFIER OPEN_BRACKET index_operators CLOSE_BRACKET
+	// |
+	// func_call OPEN_BRACKET index_operators CLOSE_BRACKET
 	|
 	OPEN_PARENTHESIS expression CLOSE_PARENTHESIS
 	|

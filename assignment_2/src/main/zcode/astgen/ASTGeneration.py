@@ -132,7 +132,11 @@ class ASTGeneration(ZCodeVisitor):
             return [self.visit(ctx.expression())] + self.visit(ctx.array_literal_prime())
 
     # expression: 
-    # 	expression OPEN_BRACKET index_operators CLOSE_BRACKET
+    # 	expression OPEN_BRACKET index_operators CLOSE_BRACKET	
+    #   |
+    #   IDENTIFIER OPEN_BRACKET index_operators CLOSE_BRACKET
+    #   |
+    #   func_call OPEN_BRACKET index_operators CLOSE_BRACKET
     # 	|
     # 	OPEN_PARENTHESIS expression CLOSE_PARENTHESIS
     # 	|
@@ -160,6 +164,7 @@ class ASTGeneration(ZCodeVisitor):
         if ctx.index_operators():
             arr = self.visit(ctx.expression())
             idx = self.visit(index_operators())
+            # print("expression with index operators is called")
             return ArrayCell(arr,idx)
         
         elif ctx.OPEN_PARENTHESIS():
@@ -167,6 +172,7 @@ class ASTGeneration(ZCodeVisitor):
         
         elif ctx.SUB_OPERATOR():
             op = ctx.SUB_OPERATOR().getText()
+            print("unary op is called" + op)
             operand = self.visit(ctx.expression())
             return UnaryOp(op,operand)
         
@@ -212,6 +218,10 @@ class ASTGeneration(ZCodeVisitor):
         
         elif ctx.literal():
             return self.visit(ctx.literal())
+        
+        elif ctx.array_literal():
+            # print("array literal is called")
+            return self.visit(ctx.array_literal())
         
         else: return None
 
