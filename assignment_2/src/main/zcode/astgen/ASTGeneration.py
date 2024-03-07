@@ -455,7 +455,7 @@ class ASTGeneration(ZCodeVisitor):
         if ctx.getChildCount() == 1:
             return Return(None)
         else:
-            return Return(self.visit(ctx.expression(0)))
+            return Return(self.visit(ctx.expression()))
 
     #return_statement: ret NEWLINE newline_list;
     def visitReturn_statement(self,ctx:ZCodeParser.Return_statementContext):
@@ -473,15 +473,15 @@ class ASTGeneration(ZCodeVisitor):
 
     # lhs: expression;
     def visitLhs(self,ctx:ZCodeParser.LhsContext):
-        return self.visit(ctx.expression(0))
+        return self.visit(ctx.expression())
 
     #rhs: expression;
     def visitRhs(self,ctx:ZCodeParser.RhsContext):
-        return self.visit(ctx.expression(0))
+        return self.visit(ctx.expression())
 
     #if_statement: IF OPEN_PARENTHESIS expression CLOSE_PARENTHESIS if_body elif_statement_list else_statement newline_list;
     def visitIf_statement(self,ctx:ZCodeParser.If_statementContext):
-        expr = self.visit(ctx.expression(0))
+        expr = self.visit(ctx.expression())
         thenStmt = self.visit(ctx.if_body())        
         elifStmt = self.visit(ctx.elif_statement_list())
         elseStmt = self.visit(ctx.else_statement())
@@ -509,7 +509,7 @@ class ASTGeneration(ZCodeVisitor):
     
     #elif_statement: ELIF OPEN_PARENTHESIS expression CLOSE_PARENTHESIS if_body;
     def visitElif_statement(self,ctx:ZCodeParser.Elif_statementContext):
-        expr = self.visit(ctx.expression(0))
+        expr = self.visit(ctx.expression())
         stmt = self.visit(ctx.if_body())
         return (expr,stmt)
 
