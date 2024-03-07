@@ -206,47 +206,47 @@ class ASTGenSuite(unittest.TestCase):
         #print(expect)
         self.assertTrue(TestAST.test(input, expect, 316))  
         
-        # input = """
-        #     var x <- -a[1+2] ... 2
-        # """
-        # expect = str(Program([
-        #             VarDecl(Id("x"), None, "var",  BinaryOp("...", UnaryOp("-", ArrayCell(Id("a"), [BinaryOp("+", NumberLiteral(1.0), NumberLiteral(2.0))])), NumberLiteral(2.0)))
-        #         ]))
-        # #print(expect)
-        # self.assertTrue(TestAST.test(input, expect, 317))  
+        input = """
+            var x <- -a[1+2] ... 2
+        """
+        expect = str(Program([
+                    VarDecl(Id("x"), None, "var",  BinaryOp("...", UnaryOp("-", ArrayCell(Id("a"), [BinaryOp("+", NumberLiteral(1.0), NumberLiteral(2.0))])), NumberLiteral(2.0)))
+                ]))
+        #print(expect)
+        self.assertTrue(TestAST.test(input, expect, 317))  
         
-        # input = """
-        #     var x <- fun()
-        # """
-        # expect = str(Program([
-        #             VarDecl(Id("x"), None, "var",  CallExpr(Id("fun"), []))
-        #         ]))
-        # #print(expect)
-        # self.assertTrue(TestAST.test(input, expect, 318)) 
+        input = """
+            var x <- fun()
+        """
+        expect = str(Program([
+                    VarDecl(Id("x"), None, "var",  CallExpr(Id("fun"), []))
+                ]))
+        #print(expect)
+        self.assertTrue(TestAST.test(input, expect, 318)) 
         
-        # input = """
-        #     var x <- fun(1+1, "a")
-        # """
-        # expect = str(Program([
-        #             VarDecl(Id("x"), None, "var",  CallExpr(Id("fun"), [BinaryOp("+", NumberLiteral(1.0), NumberLiteral(1.0)), StringLiteral("a")]))
-        #         ]))
-        # #print(expect)
-        # self.assertTrue(TestAST.test(input, expect, 319)) 
+        input = """
+            var x <- fun(1+1, "a")
+        """
+        expect = str(Program([
+                    VarDecl(Id("x"), None, "var",  CallExpr(Id("fun"), [BinaryOp("+", NumberLiteral(1.0), NumberLiteral(1.0)), StringLiteral("a")]))
+                ]))
+        #print(expect)
+        self.assertTrue(TestAST.test(input, expect, 319)) 
         
-        # input = """
-        #     var x <- fun(fun())
-        # """
-        # expect = str(Program([
-        #             VarDecl(Id("x"), None, "var",  CallExpr(Id("fun"), [CallExpr(Id("fun"), [])]))
-        #         ]))
-        # #print(expect)
-        # self.assertTrue(TestAST.test(input, expect, 320)) 
+        input = """
+            var x <- fun(fun())
+        """
+        expect = str(Program([
+                    VarDecl(Id("x"), None, "var",  CallExpr(Id("fun"), [CallExpr(Id("fun"), [])]))
+                ]))
+        #print(expect)
+        self.assertTrue(TestAST.test(input, expect, 320)) 
         
-        # input = """
-        #     var x <- (2 ... 3) ... 4
-        # """
-        # expect = str(Program([
-        #             VarDecl(Id("x"), None, "var",  BinaryOp("...", BinaryOp("...", NumberLiteral(2.0), NumberLiteral(3.0)), NumberLiteral(4.0)))
-        #         ]))
-        # #print(expect)
-        # self.assertTrue(TestAST.test(input, expect, 321)) 
+        input = """
+            var x <- 2 ... 3 ... 4
+        """
+        expect = str(Program([
+                    VarDecl(Id("x"), None, "var",  BinaryOp("...", BinaryOp("...", NumberLiteral(2.0), NumberLiteral(3.0)), NumberLiteral(4.0)))
+                ]))
+        #print(expect)
+        self.assertTrue(TestAST.test(input, expect, 321)) 

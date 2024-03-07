@@ -9,8 +9,7 @@ class ASTGeneration(ZCodeVisitor):
 
     #program: newline_list decllist EOF;
     def visitProgram(self, ctx: ZCodeParser.ProgramContext):
-        decl = self.visit(ctx.decllist())
-        return Program(decl)
+        return Program(self.visit(ctx.decllist()))
     
     #decllist:  decl decllist | decl ;   
     def visitDecllist(self,ctx: ZCodeParser.DecllistContext):
@@ -107,12 +106,12 @@ class ASTGeneration(ZCodeVisitor):
     #OBSOLETE
     #array_expression: OPEN_BRACKET arrlist CLOSE_BRACKET | arrlist;
     def visitArray_expression(self,ctx:ZCodeParser.Array_expressionContext):
-        return None
+        pass
 
     #OBSOLETE
     #arrlist_expression: OPEN_BRACKET array_expression COMMA arrlist_expression CLOSE_BRACKET | array_expression;
     def visitArrlist_expression(self,ctx:ZCodeParser.Arrlist_expressionContext):
-        return None
+        pass
 
     #array_literal: OPEN_BRACKET array_literal_prime CLOSE_BRACKET | OPEN_BRACKET CLOSE_BRACKET;
     def visitArray_literal(self,ctx:ZCodeParser.Array_literalContext):
@@ -134,10 +133,8 @@ class ASTGeneration(ZCodeVisitor):
     #   |
     #   //DENTIFIER OPEN_BRACKET index_operators CLOSE_BRACKET
     #   |
-    #   //func_call OPEN_BRACKET index_operators CLOSE_BRACKET
-    # 	|
-    # 	OPEN_PARENTHESIS expression CLOSE_PARENTHESIS
-    # 	|
+    #   //func_call OPEN_BRACKET index_operators CLOSE_BRACKET    
+    #   |
     # 	<assoc=right>SUB_OPERATOR expression
     # 	|
     # 	<assoc=right>NOT_OPERATOR expression
@@ -164,9 +161,6 @@ class ASTGeneration(ZCodeVisitor):
             idx = self.visit(ctx.index_operators())
             # print("expression with index operators is called")
             return ArrayCell(arr,idx)
-        
-        elif ctx.OPEN_PARENTHESIS():
-            return self.visit(ctx.expression(0))
         
         elif ctx.SUB_OPERATOR():
             op = ctx.SUB_OPERATOR().getText()
@@ -258,15 +252,15 @@ class ASTGeneration(ZCodeVisitor):
 
     #THIS IS OBSOLETE
     def visitNon_rel_operators(self,ctx:ZCodeParser.Non_rel_operatorsContext):
-        return None
+        pass
 
     #THIS IS OBSOLETE
     def visitNon_str_operators(self,ctx: ZCodeParser.Non_str_operatorsContext):
-        return None
+        pass
 
     #THIS IS OBSOLETE
     def visitNon_associative_operands(self,ctx: ZCodeParser.Non_associative_operandsContext):
-        return None
+        pass
 
     #typ: BOOL_TYPE | NUMBER_TYPE | STRING_TYPE;
     def visitTyp(self,ctx:ZCodeParser.TypContext):
@@ -352,7 +346,7 @@ class ASTGeneration(ZCodeVisitor):
     def visitFuncdecl(self, ctx: ZCodeParser.FuncdeclContext):
         name = Id(ctx.IDENTIFIER().getText())
         param = self.visit(ctx.param_decl_list())
-        body = self.visit(ctx.body()) if ctx.body() else None
+        body = self.visit(ctx.body())
         return FuncDecl(name,param,body)
 
     #param_decl_list: param_decl_prime | ;
@@ -400,8 +394,10 @@ class ASTGeneration(ZCodeVisitor):
     def visitBody(self,ctx:ZCodeParser.BodyContext):
         if ctx.statement_block():
             return self.visit(ctx.statement_block())
-        else: 
+        elif ctx.ret(): 
             return self.visit(ctx.ret())
+        else:
+            return None
 
     #statement_block: BEGIN statement_list END NEWLINE newline_list;
     def visitStatement_block(self, ctx: ZCodeParser.Statement_blockContext):
@@ -459,7 +455,7 @@ class ASTGeneration(ZCodeVisitor):
         if ctx.getChildCount() == 1:
             return Return(None)
         else:
-            return Return(self.visit(ctx.expression()))
+            return Return(self.visit(ctx.expression(0)))
 
     #return_statement: ret NEWLINE newline_list;
     def visitReturn_statement(self,ctx:ZCodeParser.Return_statementContext):
@@ -477,15 +473,15 @@ class ASTGeneration(ZCodeVisitor):
 
     # lhs: expression;
     def visitLhs(self,ctx:ZCodeParser.LhsContext):
-        return self.visit(ctx.expression())
+        return self.visit(ctx.expression(0))
 
     #rhs: expression;
     def visitRhs(self,ctx:ZCodeParser.RhsContext):
-        return self.visit(ctx.expression())
+        return self.visit(ctx.expression(0))
 
     #if_statement: IF OPEN_PARENTHESIS expression CLOSE_PARENTHESIS if_body elif_statement_list else_statement newline_list;
     def visitIf_statement(self,ctx:ZCodeParser.If_statementContext):
-        expr = self.visit(ctx.expression())
+        expr = self.visit(ctx.expression(0))
         thenStmt = self.visit(ctx.if_body())        
         elifStmt = self.visit(ctx.elif_statement_list())
         elseStmt = self.visit(ctx.else_statement())
@@ -503,8 +499,6 @@ class ASTGeneration(ZCodeVisitor):
             return self.visit(ctx.statement())
         elif ctx.statement_block():
             return self.visit(ctx.statement_block())
-        else:
-            return None
 
     #elif_statement_list: elif_statement elif_statement_list |  ;
     def visitElif_statement_list(self,ctx:ZCodeParser.Elif_statement_listContext):
@@ -515,7 +509,7 @@ class ASTGeneration(ZCodeVisitor):
     
     #elif_statement: ELIF OPEN_PARENTHESIS expression CLOSE_PARENTHESIS if_body;
     def visitElif_statement(self,ctx:ZCodeParser.Elif_statementContext):
-        expr = self.visit(ctx.expression())
+        expr = self.visit(ctx.expression(0))
         stmt = self.visit(ctx.if_body())
         return (expr,stmt)
 
@@ -546,8 +540,6 @@ class ASTGeneration(ZCodeVisitor):
             return self.visit(ctx.statement())
         elif ctx.statement_block():
             return self.visit(ctx.statement_block())
-        else:
-            return None
     
     #break_statement: BREAK_STATEMENT NEWLINE newline_list;
     def visitBreak_statement(self,ctx:ZCodeParser.Break_statementContext):

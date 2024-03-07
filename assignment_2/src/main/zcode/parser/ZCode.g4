@@ -56,8 +56,6 @@ expression:
 	// |
 	// func_call OPEN_BRACKET index_operators CLOSE_BRACKET
 	|
-	OPEN_PARENTHESIS expression CLOSE_PARENTHESIS
-	|
 	<assoc=right>SUB_OPERATOR expression
 	|
 	<assoc=right>NOT_OPERATOR expression
