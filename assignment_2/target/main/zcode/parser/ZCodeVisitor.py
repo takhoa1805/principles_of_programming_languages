@@ -29,6 +29,16 @@ class ZCodeVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by ZCodeParser#vardecl_only.
+    def visitVardecl_only(self, ctx:ZCodeParser.Vardecl_onlyContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ZCodeParser#vardecl_init.
+    def visitVardecl_init(self, ctx:ZCodeParser.Vardecl_initContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by ZCodeParser#arrlist.
     def visitArrlist(self, ctx:ZCodeParser.ArrlistContext):
         return self.visitChildren(ctx)
@@ -41,6 +51,16 @@ class ZCodeVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by ZCodeParser#arrlist_expression.
     def visitArrlist_expression(self, ctx:ZCodeParser.Arrlist_expressionContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ZCodeParser#array_literal.
+    def visitArray_literal(self, ctx:ZCodeParser.Array_literalContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ZCodeParser#array_literal_prime.
+    def visitArray_literal_prime(self, ctx:ZCodeParser.Array_literal_primeContext):
         return self.visitChildren(ctx)
 
 
