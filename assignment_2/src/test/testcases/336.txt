@@ -1,0 +1,7 @@
+
+        func foo()
+            begin
+                var x <- (1 + 2) * (3 - 4) / (5 % 6)
+                print(x)
+            end
+        

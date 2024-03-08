@@ -20,10 +20,10 @@ class ASTGeneration(ZCodeVisitor):
 
     #decl: vardecl | funcdecl ;
     def visitDecl(self, ctx: ZCodeParser.DeclContext):
-        if ctx.vardecl():
-            return self.visit(ctx.vardecl())
-        else:
+        if ctx.funcdecl():
             return self.visit(ctx.funcdecl())
+        else:
+            return self.visit(ctx.vardecl())
 
     # vardecl: 
     # 	vardecl_only
@@ -135,6 +135,8 @@ class ASTGeneration(ZCodeVisitor):
     #   |
     #   //func_call OPEN_BRACKET index_operators CLOSE_BRACKET    
     #   |
+	#   OPEN_PARENTHESIS expression CLOSE_PARENTHESIS
+    #   |
     # 	<assoc=right>SUB_OPERATOR expression
     # 	|
     # 	<assoc=right>NOT_OPERATOR expression
@@ -162,6 +164,9 @@ class ASTGeneration(ZCodeVisitor):
             # print("expression with index operators is called")
             return ArrayCell(arr,idx)
         
+        elif ctx.OPEN_PARENTHESIS() and ctx.expression():
+            return self.visit(ctx.expression(0))
+
         elif ctx.SUB_OPERATOR():
             op = ctx.SUB_OPERATOR().getText()
             # print("unary op is called" + op)

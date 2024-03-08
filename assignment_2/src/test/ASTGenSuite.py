@@ -485,6 +485,153 @@ class ASTGenSuite(unittest.TestCase):
            ]))
         ]))
         #print(expect)
-        self.assertTrue(TestAST.test(input, expect, 333))  
+        self.assertTrue(TestAST.test(input, expect, 333))
+
+        input = """
+        func main()
+            begin
+
+                number arr[5] <- [1, 2, 3, 4, 5]
+
+                var index <- 2
+
+                
+            end
+        """
+        expect = str(Program([
+            FuncDecl(Id("main"),[],Block([
+                VarDecl(Id("arr"),ArrayType([5.0],NumberType()),None,ArrayLiteral([NumberLiteral(1.0),NumberLiteral(2.0),NumberLiteral(3.0),NumberLiteral(4.0),NumberLiteral(5.0)])),
+                VarDecl(Id("index"),None,"var",NumberLiteral(2.0))
+            ]))
+        ]))
+        self.assertTrue(TestAST.test(input, expect, 334))  
 
         
+        input = """
+        func main()
+            begin
+                var x <- (1 + 2) * (3 - 4) / (5 % 6)
+                print(x)
+            end
+        """
+        expect = str(Program([FuncDecl(Id("main"), [], Block([VarDecl(Id("x"), None, "var", BinaryOp("/", BinaryOp("*", BinaryOp("+", NumberLiteral(1.0), NumberLiteral(2.0)), BinaryOp("-", NumberLiteral(3.0), NumberLiteral(4.0))), BinaryOp("%", NumberLiteral(5.0), NumberLiteral(6.0)))), CallStmt(Id("print"), [Id("x")])]))]))
+        self.assertTrue(TestAST.test(input, expect, 335))
+
+
+        input = """
+        func foo()
+            begin
+                var x <- (1 + 2) * (3 - 4) / (5 % 6)
+                print(x)
+            end
+        """
+        expect = str(Program([FuncDecl(Id("foo"), [], Block([VarDecl(Id("x"), None, "var", BinaryOp("/", BinaryOp("*", BinaryOp("+", NumberLiteral(1.0), NumberLiteral(2.0)), BinaryOp("-", NumberLiteral(3.0), NumberLiteral(4.0))), BinaryOp("%", NumberLiteral(5.0), NumberLiteral(6.0)))), CallStmt(Id("print"), [Id("x")])]))]))
+        self.assertTrue(TestAST.test(input, expect, 336))
+
+
+
+        input = """
+            var x <- 1 + 2 +3
+        """
+        expect = str(Program([
+                    VarDecl(Id("x"), None, "var",  BinaryOp("+", BinaryOp("+", NumberLiteral(1.0), NumberLiteral(2.0)), NumberLiteral(3.0)))
+                ]))
+        #print(expect)
+        self.assertTrue(TestAST.test(input, expect, 337)) 
+
+        input = """func main()
+                begin
+                    ##this is a comment
+                end
+                """
+        expect =str(Program([FuncDecl(Id("main"), [], Block([]))]))
+        self.assertTrue(TestAST.test(input,expect,338))  
+    
+        input = """func main() 
+                begin
+                    break 
+                end
+                """
+        expect =str(Program([FuncDecl(Id("main"), [], Block(["Break"]))]))
+        self.assertTrue(TestAST.test(input,expect,339)) 
+
+        input = """func main() 
+                begin
+                end
+                """
+        expect =str(Program([FuncDecl(Id("main"), [], Block([]))]))
+        self.assertTrue(TestAST.test(input,expect,339)) 
+
+        input = """func main()
+                begin
+                    dynamic a <- 1
+                end
+                """
+        expect =str(Program([FuncDecl(Id("main"), [], Block([VarDecl(Id("a"), None, "dynamic", NumberLiteral(1.0))]))]))
+        self.assertTrue(TestAST.test(input,expect,340)) 
+
+        input = """func main()
+                begin
+                    begin
+                        begin
+                           i <- i + 1
+                        end
+                    end
+                end
+                """
+        expect =str(Program([FuncDecl(Id("main"), [], Block([Block([Block([Assign(Id("i"), BinaryOp("+", Id("i"), NumberLiteral(1.0)))])])]))]))
+        self.assertTrue(TestAST.test(input,expect,341))
+    
+        input = """
+                func main()
+                begin
+                    number a <- 0
+                    if (1 < 2) if (2 < 3) a <- 1
+                    if (5 < 6) a <- 2
+                    else a <- 3
+                end
+                """
+        expect =str(Program([FuncDecl(Id("main"), [], Block([VarDecl(Id("a"), NumberType(), None, NumberLiteral(0.0)), 
+                If((BinaryOp("<", NumberLiteral(1.0), NumberLiteral(2.0))), 
+                   If((BinaryOp("<", NumberLiteral(2.0), NumberLiteral(3.0))), Assign(Id("a"), NumberLiteral(1.0)), [], None), [], None), 
+                If((BinaryOp("<", NumberLiteral(5.0), NumberLiteral(6.0))), Assign(Id("a"), NumberLiteral(2.0)), [], Assign(Id("a"), NumberLiteral(3.0)))]))]))
+        self.assertTrue(TestAST.test(input,expect,342)) 
+
+
+        input ="""func main()
+                begin
+                    readNumber()
+                end
+                """
+        expect =str(Program([FuncDecl(Id("main"), [], Block([CallStmt(Id("readNumber"), [])]))]))
+        self.assertTrue(TestAST.test(input,expect,343))    
+    
+        input ="""func main()
+                begin
+                    readNumber(5)
+                end
+                """
+        expect =str(Program([FuncDecl(Id("main"), [], Block([CallStmt(Id("readNumber"), [NumberLiteral(5.0)])]))]))
+        self.assertTrue(TestAST.test(input,expect,344))
+
+        input ="""func add(number a, number b)
+                return a + b
+            func main()
+            begin
+                number a <- 10
+                number b <- 3
+                number sum <- add(a, b)
+                print(sum)
+            end
+                """
+        expect =str(Program([FuncDecl(Id("add"), [VarDecl(Id("a"), NumberType(), None, None), VarDecl(Id("b"), NumberType(), None, None)], Return(BinaryOp("+", Id("a"), Id("b")))), FuncDecl(Id("main"), [], Block([VarDecl(Id("a"), NumberType(), None, NumberLiteral(10.0)), VarDecl(Id("b"), NumberType(), None, NumberLiteral(3.0)), VarDecl(Id("sum"), NumberType(), None, CallExpr(Id("add"), [Id("a"), Id("b")])), CallStmt(Id("print"), [Id("sum")])]))]))
+        self.assertTrue(TestAST.test(input,expect,345))   
+  
+        input = """func check(bool flag, number a, number b)
+            begin
+                if (flag) return a
+                else return b
+            end
+        """
+        expect = str(Program([FuncDecl(Id("check"), [VarDecl(Id("flag"), BoolType()),VarDecl(Id("a"), NumberType()), VarDecl(Id("b"), NumberType())], Block([If(Id("flag"), Return(Id("a")), [], Return(Id("b")))]))]))
+        self.assertTrue(TestAST.test(input, expect, 346))

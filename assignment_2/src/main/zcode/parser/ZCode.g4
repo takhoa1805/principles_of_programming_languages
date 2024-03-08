@@ -11,8 +11,8 @@ options {
 
 
 program: newline_list decllist EOF;
-decllist:  decl decllist | decl ;
-decl: vardecl | funcdecl ;
+decllist: decl decllist|decl;
+decl:vardecl|funcdecl;
 
 
 //-------------------------------------------------------------------//
@@ -55,6 +55,8 @@ expression:
 	// IDENTIFIER OPEN_BRACKET index_operators CLOSE_BRACKET
 	// |
 	// func_call OPEN_BRACKET index_operators CLOSE_BRACKET
+	|
+	OPEN_PARENTHESIS expression CLOSE_PARENTHESIS
 	|
 	<assoc=right>SUB_OPERATOR expression
 	|

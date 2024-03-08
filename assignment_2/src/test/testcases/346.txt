@@ -1,0 +1,6 @@
+func check(bool flag, number a, number b)
+            begin
+                if (flag) return a
+                else return b
+            end
+        
