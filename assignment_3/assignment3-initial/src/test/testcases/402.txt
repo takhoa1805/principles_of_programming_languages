@@ -1,0 +1,7 @@
+
+func f(number j)
+
+func main()
+begin
+    writeNumber(j)
+end

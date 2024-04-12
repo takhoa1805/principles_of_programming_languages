@@ -1,2 +1,8 @@
-number a
-        
+
+number a <- 2
+number b <- 5
+
+func main(number a, string b, number a)
+begin 
+    a <- 3
+end
