@@ -1,0 +1,11 @@
+
+number f
+
+func f(number x)
+begin
+end
+
+func main()
+begin
+end
+

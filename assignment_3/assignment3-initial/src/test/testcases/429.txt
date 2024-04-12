@@ -1,0 +1,11 @@
+
+var f <- 10
+func f()
+    return
+
+func main()
+begin
+    dynamic a
+    dynamic b
+    number c
+end

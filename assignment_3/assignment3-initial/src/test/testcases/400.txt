@@ -1,8 +1,5 @@
 
-number a <- 2
-number b <- 5
-
-func main(number a, string b, number a)
-begin 
-    a <- 3
+func main(number a, string b)
+begin   
+    number c <- a + b - f(a)
 end

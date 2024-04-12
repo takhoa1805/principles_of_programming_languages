@@ -1,0 +1,29 @@
+INPUT:
+
+- AST tree ===> node bắt đầu là Program. Traverse bằng cách gọi attribute của class đó.
+- Tất cả attribute thuộc từng class được define trong file AST.py
+- Thực hiện các hàm visit trong file StaticCheck.py để statick checking
+
+
+OUTPUT:
+- Raise các error
+- Error being worked on:
+    - Undeclared
+    - Redeclared
+
+
+WORKING PROGRESS: Declare stuffs
+- Lưu trữ tên các identifier đã được tạo ra trong một mảng 2 chiều:
+    - Trong đó chiều rộng hoạt động một stack để xử lý trong trường hợp đi từ scope lớn đến scope bé
+    - Chiều sâu hoạt động như một list để tham khảo các biến đã được thêm vào.
+
+- Possible cases for function redeclaration:
+    - Redeclared trong parameter
+    - Redeclared trong block:
+        - Declare 2 biến cùng tên trong block
+        - Declare 1 biến cùng tên với biến đã khai báo tại parameter.
+
+    - Undeclared:
+        - Đối với biến. Biến được dùng khi nào?:
+            - Expression
+            - Parameter

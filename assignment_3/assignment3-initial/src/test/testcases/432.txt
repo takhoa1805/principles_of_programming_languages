@@ -1,0 +1,7 @@
+
+number x <- 5
+        
+func main(number x)
+begin
+    dynamic main
+end

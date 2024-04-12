@@ -1,0 +1,15 @@
+
+func add(number a, number b)
+begin
+end
+
+func add (number a)
+begin
+end
+
+func main()
+begin
+    number x <- readNumber()
+    number y <- readNumber()
+    writeNumber(add(x, y))
+end

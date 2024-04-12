@@ -1,0 +1,10 @@
+
+number a <- 2
+number b <- 5
+number c
+
+func main(number a, string b)
+begin   
+    string c
+    number c
+end

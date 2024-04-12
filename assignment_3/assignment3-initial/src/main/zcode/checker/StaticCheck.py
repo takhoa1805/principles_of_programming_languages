@@ -23,38 +23,60 @@ class StaticChecker(BaseVisitor, Utils):
         param =[[]]
         for decl in ast.decl:
             self.visit(decl,param)
+        # print(ast)
+        
 
     def visitVarDecl(self, ast:VarDecl, param):
         print("Var decl is called")
+
         name = self.visit(ast.name,param)
         if name in param[0]:
             raise Redeclared('Variable',name)
+
         param[0] += [name]
+
+    def myVisitParameter(self,ast:VarDecl,param):
+        print("Param decl is called")
+
+        name = self.visit(ast.name,param)
+        if name in param[0]:
+            raise Redeclared('Parameter',name)
+        param[0] += [name] 
 
     def visitFuncDecl(self, ast: FuncDecl, param):
         print("Func decl is called")
         name = self.visit(ast.name,param)
+        body = self.visit(ast.body,param)
+
+        print(ast)
+
         if name in param[0]:
             raise Redeclared('Function',name)
         
         env = [[]] + param
 
+        # To check redeclaration in function's parameters.
         for decl in ast.param:
-            self.visit(decl,env)
+            self.myVisitParameter(decl,env)
+    
+        # To check redeclaration in function's body
+        for decl in body:
+            self.visit(decl,env)    
 
-        print(ast.body)
+        param[0] += [name]
+
         
         
 
 
     def visitNumberType(self, ast, param):
-        pass
+        return NumberType()
 
     def visitBoolType(self, ast, param):
-        pass
+        return BoolType()
 
     def visitStringType(self, ast, param):
-        pass
+        return StringType()
 
     def visitArrayType(self, ast, param):
         pass
@@ -74,8 +96,8 @@ class StaticChecker(BaseVisitor, Utils):
     def visitArrayCell(self, ast, param):
         pass
 
-    def visitBlock(self, ast, param):
-        pass
+    def visitBlock(self, ast:Block, param):
+        return ast.stmt
 
     def visitIf(self, ast, param):
         pass
