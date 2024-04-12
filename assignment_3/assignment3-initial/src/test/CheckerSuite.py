@@ -10,6 +10,8 @@ class CheckerSuite(unittest.TestCase):
 func main(number a, string b)
 begin   
     number c <- a + b - f(a)
+    c <- a + b
+    
 end
 """
         expect = ""

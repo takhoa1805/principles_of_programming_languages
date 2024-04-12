@@ -48,7 +48,6 @@ class StaticChecker(BaseVisitor, Utils):
         name = self.visit(ast.name,param)
         body = self.visit(ast.body,param)
 
-        print(ast)
 
         if name in param[0]:
             raise Redeclared('Function',name)
@@ -61,7 +60,12 @@ class StaticChecker(BaseVisitor, Utils):
     
         # To check redeclaration in function's body
         for decl in body:
-            self.visit(decl,env)    
+            self.visit(decl,env)  
+
+        for expr in body:
+            print(expr)
+
+          
 
         param[0] += [name]
 
@@ -97,6 +101,8 @@ class StaticChecker(BaseVisitor, Utils):
         pass
 
     def visitBlock(self, ast:Block, param):
+        print("Visit block is called")
+        # print(ast)
         return ast.stmt
 
     def visitIf(self, ast, param):

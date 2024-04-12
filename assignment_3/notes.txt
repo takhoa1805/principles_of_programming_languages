@@ -25,5 +25,14 @@ WORKING PROGRESS: Declare stuffs
 
     - Undeclared:
         - Đối với biến. Biến được dùng khi nào?:
-            - Expression
+            - Expression:
+                - binary operators
+                - unary operators 
             - Parameter
+            - Statement:
+                - if statement
+                - vardecl
+                - assignment statement
+                - for statement
+                - return statement
+                - function call statement (call expr)
