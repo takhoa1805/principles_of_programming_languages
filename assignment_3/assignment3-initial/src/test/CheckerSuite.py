@@ -9,8 +9,20 @@ class CheckerSuite(unittest.TestCase):
         input ="""
 func main(number a, string b)
 begin   
-    number c <- a + b - f(a)
-    c <- a + b
+    c <- a + b + c + f(a)
+
+    a <- c
+
+    f(a)
+
+    if (a > c) return c
+
+
+    for i until i < 10 by 1
+    begin
+        print(i)
+        var a <- 5
+    end
     
 end
 """

@@ -62,16 +62,13 @@ class StaticChecker(BaseVisitor, Utils):
         for decl in body:
             self.visit(decl,env)  
 
-        for expr in body:
-            print(expr)
+        for stmt in body:
+            print(stmt)
 
-          
 
         param[0] += [name]
 
         
-        
-
 
     def visitNumberType(self, ast, param):
         return NumberType()
@@ -86,45 +83,47 @@ class StaticChecker(BaseVisitor, Utils):
         pass
 
     def visitBinaryOp(self, ast, param):
-        pass
+        print("Visit Binary op")
 
     def visitUnaryOp(self, ast, param):
-        pass
+        print("Visit unary op")
 
     def visitCallExpr(self, ast, param):
-        pass
+        print("Visit call expr")
 
     def visitId(self, ast: Id, param):
+        print("Visited id = " + str(ast.name))
         return ast.name
 
     def visitArrayCell(self, ast, param):
-        pass
+        print("Visit array cell")
 
     def visitBlock(self, ast:Block, param):
-        print("Visit block is called")
+        print("Visit statement block ")
         # print(ast)
         return ast.stmt
 
     def visitIf(self, ast, param):
-        pass
+        print("Visit if statement")
 
     def visitFor(self, ast, param):
-        pass
+        print("Visit for statement")
 
     def visitContinue(self, ast, param):
-        pass
+        print("Visit continue statement")
 
     def visitBreak(self, ast, param):
-        pass
+        print("Visit break statement")
+
 
     def visitReturn(self, ast, param):
-        pass
+        print("Visit return statement")
 
     def visitAssign(self, ast, param):
-        pass
+        print("Visit assign statement")
 
     def visitCallStmt(self, ast, param):
-        pass
+        print("Visit function call statement")
 
     def visitNumberLiteral(self, ast, param):
         return NumberType()
@@ -136,4 +135,4 @@ class StaticChecker(BaseVisitor, Utils):
         return StringType()
 
     def visitArrayLiteral(self, ast, param):
-        pass
+        print("Visit array literal")
