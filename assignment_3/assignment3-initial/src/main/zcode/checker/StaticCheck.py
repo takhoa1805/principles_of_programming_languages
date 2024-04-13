@@ -21,6 +21,7 @@ class StaticChecker(BaseVisitor, Utils):
 
     def visitProgram(self, ast:Program, param):
         param =[[]]
+        print(ast.decl)
         for decl in ast.decl:
             self.visit(decl,param)
         # print(ast)
@@ -48,6 +49,7 @@ class StaticChecker(BaseVisitor, Utils):
         name = self.visit(ast.name,param)
         body = self.visit(ast.body,param)
 
+        # print(body)
 
         if name in param[0]:
             raise Redeclared('Function',name)
@@ -58,81 +60,83 @@ class StaticChecker(BaseVisitor, Utils):
         for decl in ast.param:
             self.myVisitParameter(decl,env)
     
-        # To check redeclaration in function's body
-        for decl in body:
-            self.visit(decl,env)  
+        # # To check redeclaration in function's body
+        # for decl in body:
+        #     print(decl)
+        #     self.visit(decl,env)  
 
+        # To travel through every statements
         for stmt in body:
-            print(stmt)
+            self.visit(stmt,env)
 
 
         param[0] += [name]
 
         
 
-    def visitNumberType(self, ast, param):
+    def visitNumberType(self, ast:NumberType, param):
         return NumberType()
 
-    def visitBoolType(self, ast, param):
+    def visitBoolType(self, ast:BoolType, param):
         return BoolType()
 
-    def visitStringType(self, ast, param):
+    def visitStringType(self, ast:StringType, param):
         return StringType()
 
-    def visitArrayType(self, ast, param):
-        pass
+    def visitArrayType(self, ast:ArrayType, param):
+        print("Visit array type")
 
-    def visitBinaryOp(self, ast, param):
+    def visitBinaryOp(self, ast:BinaryOp, param):
         print("Visit Binary op")
 
-    def visitUnaryOp(self, ast, param):
+    def visitUnaryOp(self, ast:UnaryOp, param):
         print("Visit unary op")
 
-    def visitCallExpr(self, ast, param):
+    def visitCallExpr(self, ast:CallExpr, param):
         print("Visit call expr")
 
     def visitId(self, ast: Id, param):
         print("Visited id = " + str(ast.name))
         return ast.name
 
-    def visitArrayCell(self, ast, param):
+    def visitArrayCell(self, ast:ArrayCell, param):
         print("Visit array cell")
 
     def visitBlock(self, ast:Block, param):
         print("Visit statement block ")
-        # print(ast)
         return ast.stmt
 
-    def visitIf(self, ast, param):
+    def visitIf(self, ast:If, param):
         print("Visit if statement")
 
-    def visitFor(self, ast, param):
+    def visitFor(self, ast:For, param):
         print("Visit for statement")
 
-    def visitContinue(self, ast, param):
+    def visitContinue(self, ast:Continue, param):
         print("Visit continue statement")
 
-    def visitBreak(self, ast, param):
+    def visitBreak(self, ast:Break, param):
         print("Visit break statement")
 
 
-    def visitReturn(self, ast, param):
+    def visitReturn(self, ast:Return, param):
         print("Visit return statement")
 
-    def visitAssign(self, ast, param):
+    def visitAssign(self, ast:Assign, param):
         print("Visit assign statement")
+        self.visit(ast.lhs,param)
 
-    def visitCallStmt(self, ast, param):
+    def visitCallStmt(self, ast:CallStmt, param):
         print("Visit function call statement")
 
-    def visitNumberLiteral(self, ast, param):
+    def visitNumberLiteral(self, ast:NumberLiteral, param):
         return NumberType()
 
-    def visitBooleanLiteral(self, ast, param):
+    def visitBooleanLiteral(self, ast:BooleanLiteral, param):
         return BoolType()
 
-    def visitStringLiteral(self, ast, param):
+    def visitStringLiteral(self, ast:StringLiteral, param):
         return StringType()
 
-    def visitArrayLiteral(self, ast, param):
+    def visitArrayLiteral(self, ast:ArrayLiteral, param):
         print("Visit array literal")

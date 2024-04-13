@@ -5,15 +5,15 @@ begin
 
     a <- c
 
-    f(a)
+    ## f(a)
 
-    if (a > c) return c
+    ## if (a > c) return c
 
 
-    for i until i < 10 by 1
-    begin
-        print(i)
-        var a <- 5
-    end
+    ## for i until i < 10 by 1
+    ## begin
+    ##     print(i)
+    ##     var a <- 5
+    ## end
     
 end

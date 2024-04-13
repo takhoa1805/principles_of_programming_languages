@@ -36,3 +36,10 @@ WORKING PROGRESS: Declare stuffs
                 - for statement
                 - return statement
                 - function call statement (call expr)
+        - Algorithm:
+            - Travel qua tất cả các statement có trong chương trình
+            - Trong mỗi statement đó sẽ thực hiện check xem nếu tồn tại exression có sử dụng identifier
+            - Logic check việc sử dụng identifier trong expression:
+                - Truyền vào parameter tại câu lệnh visit scope tại đoạn visit đó
+                - Ở mỗi method visit, check tính hợp lệ của biến nằm trong method đó
+                - Bằng cách, một lần nữa - visit đến method Id() truyền thông số env của scope vào => tất cả những logic kiểm tra đều nằm ở method Id()
