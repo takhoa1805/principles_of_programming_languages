@@ -7,26 +7,35 @@ from AST import *
 class CheckerSuite(unittest.TestCase):
     def test_general(self):
         input ="""
+number x
 func main(number a, string b)
 begin   
-    c <- a + b + c + f(a)
 
-    a <- c
+    ##number y 
+
+    ##a <- not d
+
+    ##a <- c
 
     ## f(a)
 
-    ## if (a > c) return c
+    ##if (a > c) return d
 
 
-    ## for i until i < 10 by 1
-    ## begin
-    ##     print(i)
-    ##     var a <- 5
-    ## end
+    for i until z < 10 by 1
+    begin
+        print(i)
+        var a <- 5
+    end
     
 end
+
+
+number z
+number t
+
 """
-        expect = ""
+        expect = "Undeclared Identifier: z"
         self.assertTrue(TestChecker.test(input, expect, 400))
 
 

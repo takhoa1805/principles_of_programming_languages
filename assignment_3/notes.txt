@@ -25,17 +25,15 @@ WORKING PROGRESS: Declare stuffs
 
     - Undeclared:
         - Đối với biến. Biến được dùng khi nào?:
-            - Expression:
-                - binary operators
-                - unary operators 
-            - Parameter
-            - Statement:
-                - if statement
-                - vardecl
-                - assignment statement
-                - for statement
-                - return statement
-                - function call statement (call expr)
+            - Assign statement:
+                - LHS expression
+                - RHS expression
+            - if statement
+            - vardecl
+            - assignment statement
+            - for statement
+            - return statement
+            - function call statement (call expr)
         - Algorithm:
             - Travel qua tất cả các statement có trong chương trình
             - Trong mỗi statement đó sẽ thực hiện check xem nếu tồn tại exression có sử dụng identifier
@@ -43,3 +41,7 @@ WORKING PROGRESS: Declare stuffs
                 - Truyền vào parameter tại câu lệnh visit scope tại đoạn visit đó
                 - Ở mỗi method visit, check tính hợp lệ của biến nằm trong method đó
                 - Bằng cách, một lần nữa - visit đến method Id() truyền thông số env của scope vào => tất cả những logic kiểm tra đều nằm ở method Id()
+            ===> Lưu ý: method visit Id không trả về giá trị, chỉ được dùng để xác định undeclared thôi.
+            ===> Để lấy tên của identifier sử dụng hàm getIdName()
+
+
