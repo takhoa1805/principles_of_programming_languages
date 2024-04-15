@@ -1,8 +1,5 @@
 
 func main()
 begin
-    number x
-    begin
-        number x <- (10 + x) * 2
-    end
+    number x <- (10 + x) * 2
 end

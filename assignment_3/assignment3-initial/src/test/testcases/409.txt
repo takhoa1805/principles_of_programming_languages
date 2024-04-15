@@ -1,10 +1,8 @@
 
-func f(number j)
-begin
-end
 
 func main()
 begin
+    number x <- 5
     dynamic x <- (x - 2) * (x + true)
 end
 

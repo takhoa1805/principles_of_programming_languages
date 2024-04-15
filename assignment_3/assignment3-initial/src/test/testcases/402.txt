@@ -1,5 +1,7 @@
 
 func f(number j)
+begin
+end
 
 func main()
 begin

@@ -1,6 +1,8 @@
 
 number a <- f(2)
 func f(number x)
+begin
+end
 
 func main()
     begin

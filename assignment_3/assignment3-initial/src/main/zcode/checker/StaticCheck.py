@@ -20,7 +20,7 @@ class StaticChecker(BaseVisitor, Utils):
 
 
     def visitProgram(self, ast:Program, param):
-        param =[[]]
+        param =[['readNumber','writeNumber','readBool','writeBool','readString','writeString']]
         print(ast.decl)
         for decl in ast.decl:
             self.visit(decl,param)
@@ -29,6 +29,13 @@ class StaticChecker(BaseVisitor, Utils):
 
     def visitVarDecl(self, ast:VarDecl, param):
         print("Var decl is called")
+
+        varType = ast.varType
+        modifier = ast.modifier
+
+        # CHECK FOR UNDECLARATION OF BOTH VAR AND FUNC
+        self.visit(ast.varInit,param)
+
 
         name = self.getIdName(ast.name,param)
         if name in param[0]:
@@ -84,7 +91,7 @@ class StaticChecker(BaseVisitor, Utils):
 
     # VISIT BINARY OPERATORS
     def visitBinaryOp(self, ast:BinaryOp, param):
-        print("Visit Binary op")
+        print("Visit Binary op: " + str(ast.op))
 
         # CHECKING UNDECLARED
         left = self.visit(ast.left,param)
@@ -92,13 +99,15 @@ class StaticChecker(BaseVisitor, Utils):
 
     # VISIT UNARY OPERATORS
     def visitUnaryOp(self, ast:UnaryOp, param):
-        print("Visit unary op")
+        print("Visit unary op: " + str(ast.op))
 
         # CHECKING UNDECLARED
         oeprand = self.visit(ast.operand,param)
 
     def visitCallExpr(self, ast:CallExpr, param):
         print("Visit call expr")
+
+
 
 
     # GET IDENTIFER'S NAME => FOR ADDING TO ENV LIST
@@ -114,8 +123,16 @@ class StaticChecker(BaseVisitor, Utils):
         for id in param:
             if (ast.name in id):
                 return 
-        raise Undeclared('Identifier',ast.name)
+        raise Undeclared("Identifier",str(ast.name))
         
+    # VISIT FUNCTION IDENTIFIER ===> FOR FUNCTION UNDECLARATION CHECKING ONLY
+    def visitFunctionId(self,ast:Id,param):
+        print("Visited function id: " + str(ast.name))
+        print("Identifier environment: " + str(param))
+        for id in param:
+            if(ast.name in id):
+                return
+        raise Undeclared("Function",str(ast.name))
 
     def visitArrayCell(self, ast:ArrayCell, param):
         print("Visit array cell")
@@ -173,14 +190,30 @@ class StaticChecker(BaseVisitor, Utils):
     # ASSIGN STATEMENT
     def visitAssign(self, ast:Assign, param):
         print("Visit assign statement")
-        # CHECK IF LHS EXPRESSION CONTAINS UNDECLARED IDENTIFIER
-        lhs = self.visit(ast.lhs,param)
         # CHECK IF RHS EXPRESSION CONTAINS UNDECLARED IDENTIFIER
         rhs = self.visit(ast.rhs,param)
+        # CHECK IF LHS EXPRESSION CONTAINS UNDECLARED IDENTIFIER
+        lhs = self.visit(ast.lhs,param)
+
 
     # VISIT FUNCTION CALL STATEMENT
     def visitCallStmt(self, ast:CallStmt, param):
         print("Visit function call statement")
+
+        # VISIT EVERY COMPONENTS
+        name = self.getIdName(ast.name,param)
+        self.visitFunctionId(ast.name,param)
+        args = ast.args
+
+        for id in args:
+            self.visit(id,param)
+
+        print("Call expr with name = " + str(name) +" expr = "+ str(args))
+        
+        
+
+
+
 
     def visitNumberLiteral(self, ast:NumberLiteral, param):
         return NumberType()

@@ -5,59 +5,45 @@ from AST import *
 # MODIFY THIS FILE FOR TESTCASES
 
 class CheckerSuite(unittest.TestCase):
-    def test_general(self):
-        input ="""
-number x
-func main(number a, string b)
-begin   
+#     def test_general(self):
+#         input = """
+# func f(number j)
+# begin
+# end
 
-    ##number y 
-
-    ##a <- not d
-
-    ##a <- c
-
-    ## f(a)
-
-    ##if (a > c) return d
-
-
-    for i until z < 10 by 1
-    begin
-        print(i)
-        var a <- 5
-    end
-    
-end
-
-
-number z
-number t
-
-"""
-        expect = "Undeclared Identifier: z"
-        self.assertTrue(TestChecker.test(input, expect, 400))
+# func main()
+# begin
+#     a(5)
+# end
+# """
+#         expect ="Undeclared Function: a"
+#         self.assertTrue(TestChecker.test(input, expect, 400))
 
 
 # TEST UNDECLARATION
 
-#     def test_undeclared_1(self):
-#         input = """
-# number a <- f(2)
-# func f(number x)
+    def test_undeclared_1(self):
+        input = """
+number a <- f(2)
 
-# func main()
-#     begin
+func f(number x)
+begin
+end
 
-#     end
+func main()
+    begin
 
-# """
-#         expect="Undeclared Function: f"
-#         self.assertTrue(TestChecker.test(input,expect,401))
+    end
+
+"""
+        expect="Undeclared Function: f"
+        self.assertTrue(TestChecker.test(input,expect,401))
 
 #     def test_undeclared_2(self):
 #         input = """
 # func f(number j)
+# begin
+# end
 
 # func main()
 # begin
@@ -70,6 +56,8 @@ number t
 #     def test_undeclared_3(self):
 #         input = """
 # func f(number j)
+# begin
+# end
 
 # func main()
 # begin
@@ -100,7 +88,7 @@ number t
 #     writeNumber(x)
 # end
 # """
-#         expect = "Undeclared Identifier: x"
+#         expect = "Redeclared Variable: x"
 #         self.assertTrue(TestChecker.test(input, expect, 405))
 
 
@@ -132,14 +120,24 @@ number t
 #         input = """
 # func main()
 # begin
-#     number x
-#     begin
-#         number x <- (10 + x) * 2
-#     end
+#     number x <- (10 + x) * 2
 # end
 # """
 #         expect = "Undeclared Identifier: x"
 #         self.assertTrue(TestChecker.test(input, expect, 408))
+
+#     def test_undeclared_9(self):
+#         input = """
+
+# func main()
+# begin
+#     number x <- 5
+#     dynamic x <- (x - 2) * (x + true)
+# end
+
+# """
+#         expect ="Redeclared Variable: x"
+#         self.assertTrue(TestChecker.test(input,expect,409))
 
 
 

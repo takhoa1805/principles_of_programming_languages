@@ -1,28 +1,9 @@
 
-number x
-func main(number a, string b)
-begin   
-
-    ##number y 
-
-    ##a <- not d
-
-    ##a <- c
-
-    ## f(a)
-
-    ##if (a > c) return d
-
-
-    for i until z < 10 by 1
-    begin
-        print(i)
-        var a <- 5
-    end
-    
+func f(number j)
+begin
 end
 
-
-number z
-number t
-
+func main()
+begin
+    f(5)
+end
