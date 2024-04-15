@@ -1,0 +1,202 @@
+func foo()
+
+func main()
+ number a <- foo() + 2
+
+func foo(number a, number b)
+
+
+func foo()
+
+func foo1()
+begin
+end
+
+
+EOF
+
+TypeMisMatch in statement(Block([]))
+TypeMisMatch in statement Return()
+
+
+func foo()
+begin
+end
+
+
+
+
+
+
+
+
+lý thuyết hỗn tạp BTL3:
+Cấu trúc dữ liệu đề xuất
+o: List of lists of Symbol : variable/function
+o: [[],[],[],[]]
+class Symbol(name:String, mtype: Type)
+
+declaration / dèfinition
+class FunctionType(param: List[Type], haveBody: Boolean, returnType: Type)
+
+
+
+class VariableType(realType:Type )   BoolType(), NumberType(), StringType()
+
+class NoneType(): kiểu chauw biết, cần được suy diễn
+
+Type gồm: NumberType(), BoolType(), StringType(), ArrayType(dimension: List[FLoat], eleType: Type)    eleType: NoneTYpe(), NumberType(), BoolType(), StringType()
+
+
+
+
+attribute mtype trong Symbol sẽ là FunctionType hoặc VariableType
+***STATEMENT
+Function_dec
+	number foo
+	func foo(number a,number a)
+	begin
+	end
+
+	func readNumber() reutrn Number
+
+	func main()
+	begin
+	foo()
+	number a <- foo()
+	reuturn
+
+	- Function nếu chưa có body thì chỉ quan tâm parameter type, mặc kệ tên (ko có lỗi redeclare )
+	- Phải khởi tạo trước các built-in function vào o[[o]]
+	- Các function chỉ mới có declaration sẽ có kiểu trả về là NoneType, khi nào có body và không trả về gì mới là VoidType
+	- tên function và tên biến có thể trùng nhau => lưu ý trong việc check Redeclared cũng như visit các Id trong expression
+Variable:
+
+	dynamic c 
+	number a[2,3,4] <- [c,c]  arrayType([2,3],NumberType)
+	
+	number a[3]
+	- Các biến chưa được suy diễn kiểu sẽ là NoneType
+	- NoneType có thể suy diễn thành: StringType, BoolType, NumberType, ArrayType => ArrayType(dimension1,NoneType) có thể suy diễn cho  ArrayType(dimension2,NoneType)  (một số TH)
+
+IfStmt, Forstmt:
+	- Đầu tiên, check kiểu cho các expr ở vị trí tương ứng
+	- Tìm returnTYpe:
+		- Chúng ta sẽ tìm stmt đầu tiên trong BlockStmt hoặc IfStmt có return => đây sẽ là returnType cho cả stmt hiện tại (IfStmt/ForStmt)
+		- Sau đó vẫn visit những stmt sau, nhưng nếu gặp return thì chỉ check để raise lỗi (ko ảnh hưởng gì đến returnType đã tìm ra trước đó)
+			vd:
+				func main()
+				dynamic a
+				if 1>0
+					return true
+				else
+					return a    => TypeCanNotBeInfer
+	primitype: booltype stringtype numbertype arrayType([..],Primitype)
+
+	
+	inferable: None, arrayType([..],NoneType)
+
+*** LITERAL	arrayType([]:size, eleType)
+[  [b], [ [ 1,2] ] , [c,d], e]
+arrayType([1,2],Nonetype)    
+ArrayType([1,2],NumberType)  = arrayType
+ 
+
+NoneType => arraytype
+
+ b: arrayType([a,b,c...] ,booltype/ stringtype/ numbertype)
+
+[a,[1,2,3],a]       arrayType ([3,2], NumberType)
+arrayType ([3], NumberType)   size [3]  , eleTYpe:NuberType
+
+size [3] + [3]
+[3,3]
+a <- [1,2]   arrayType ([2], NumberType)
+
+[1,2,3]  [1,2,3]
+
+[ [[1,2],[1,2],[1,2]] , [a,a,a]]
+
+
+
+arrayType ([3,2], NoneType) => arrayType ([3,2], NumberType)
+
+NOneType ->   arrayType ([2], NumberType)
+
+[b,b]    => arrayType ([2,a,b,c...], stringtype)
+
+	[1,2,3,a] 
+    loi o [1, true] hay [[a, b], [1, true]]
+arr1: Bên có eleTYpe là None inferable qua kiểu còn lại
+=> len[arr1.size] <= len[arr2.size]
+arrayType([1],NoneType)     ArrayType([1,2],NumberType)
+  srcType: arrayType([],NoneType)    ArrayType([2],NumberType)
+arraylit(Id(b)) => ctx.value[0]: Id(b)     => b: ArrayType([2],NumberType)
+
+[1,2,3,4]
+
+ArrayLiteral: phải suy arrayliteral về thành arraytype + check type mismatch + suy kiểu cho các phần tử trong arrayLiteral trong lúc duyệt
+		Thuật toán nên sử dụng: 
+			- Duyệt lần đầu để tìm phần tử đầu tiên có type ko thể suy diễn tiếp của array, nếu ko tìm được phần tủ này thì phải lưu phần tử ArrayType có len(size) dài nhất
+			- Gọi type của phần tử đã tìm là arrayType, vậy mọi phần tử khác của mảng phải infer ra được kiểu này (hợp lệ) hoặc raise TypeMismatch In expression
+			- Duyệt tất cả các phần tử của mảng lần hai để suy kiểu cho arrayType đã tìm ở phía trên
+			- Nếu phần tử hiện tại ko phải arrayType thì trả về type của chính nó, 
+			Ngược lại, trả về 
+				ArrayType( [len(ctx.value)]+ arrayType.size, arrayType.eleType)
+				ArrayType( [len(ctx.value)], arrayType.eleType)
+			- Điểm khó ở chỗ inferType cho hai arrayType với eleTYpe của hai cái là NoneTYpe (một trong hai hoặc cả hai)
+Các literal khác chỉ cần trả về Type tương ứng của nó
+	vd: def visitBooleanLiteral(self,ctx,o):	
+		return BoolType()
+*** Expression
+Trước tiên, cần lưu ý như sau:
+	- Tên biến và tên hàm có thể trùng nhau => khi suy kiểu cho một name thì cần biến name đó đang là Function hay Variable
+	1. BinaryOp:
+		- Làm giống programming code
+		- Lưu ý khi suy kiểu: 
+			LHS hoặc RHS có thể là CallExpr, khi đó nếu cần inferType, ta phải infer cho name có kiểu là Function (chỉ thay đổi kiểu trả về (returnType) của FuntionType)
+	2.UnaryOp: tương tự BinaryOp
+	3.ArrayCell:   expression
+		- Lưu ý TH: " dynamic a
+				nunber b <- a[0]"
+			expr[list:expr]
+			a[0,1]       NOneTYpe-> type canot be infer
+			a[1+2,3,foo()]   NoneTYpe -> NumberType
+			a : arrayTYpe([1,2,3],numberTYpe)
+			len(index_operator) > len (array.size)
+			a[0]    <- ArrayType([2,3],numberType)
+			[ [ [1,2,3], [4,5,6] ]   ]  
+
+			a[0] = [ [1,2,3], [4,5,6] ]   
+			a[0,1] = [4,5,6]
+			a[0,1] <- ArrayType([3],numberType)
+			a[0,1,2] <- NumberType
+			
+			phải trả về ty peCannot Be infer, vì a ko suy được kiểu trong first usage
+	4.CallExpr:
+CallExpr(Id(foo),[])
+		  
+		func foo(number a)
+		number foo
+		number a <- foo() + 2
+		ctx.name.name , False
+		dynamic b
+		number c <- b + 2
+		ctx.name
+		- Kiểm tra type(id) có phải là FunctionType để raise lỗi
+		- Kiểm tra sự tương ứng giữa list para là list argument để raise lỗi
+		- returnTYpe cuar function laf VoidType()  raise lỗi TYpeMisMatch in expr
+		- Trả về return type của Function (có thể là Pritype hoặc NoneType hoặc ArrayType hoặc VoidType)
+				
+
+	
+***Tất cả các stmt cũng phải trả về type để check return type của func
+
+***Tất cả vị trí nào có expr cũng có thể là CallExpr => Khi infer type nên chú ý truyền vào ctx.name hay ctx.name.name
+
+*** Ngoài ra, cần chú ý ta đang inferType cho functionType hay VariableTYpe, vì tên của function và variable có thể trùng nhau
+
+
+*** Vấn đề chưa được confirm:
+	raise lỗi cho việc returnTYpe của funtion is TYpeMisMatch
+	raise lỗi cho type mismatch arrayLiteral
