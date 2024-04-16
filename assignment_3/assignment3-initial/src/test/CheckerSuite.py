@@ -5,24 +5,25 @@ from AST import *
 # MODIFY THIS FILE FOR TESTCASES
 
 class CheckerSuite(unittest.TestCase):
-#     def test_general(self):
-#         input = """
-# func main()
-#     begin
-#         if (true) begin
-#             break
-#         end
-#         elif (false) begin
-#             continue
-#         end
-#         else return true
-#     end
-# """
-#         expect ="Break Not In Loop"
-#         self.assertTrue(TestChecker.test(input, expect, 400))
+    def test_general(self):
+        input = """
+number a[5] <- [1,2,3,4,5]
+number c <- 5
+
+func f()
+
+func main()
+    begin
+        number a <- a[5]
+        f(a[5])
+    end
+
+"""
+        expect =""
+        self.assertTrue(TestChecker.test(input, expect, 400))
 
 
-# TEST UNDECLARATION
+# # TEST UNDECLARATION
 
 #     def test_undeclared_1(self):
 #         input = """
@@ -115,7 +116,7 @@ class CheckerSuite(unittest.TestCase):
 #     writeNumber(a[0])
 # end
 # """
-#         expect = "Undeclared Identifier: a"
+#         expect = ""
 #         self.assertTrue(TestChecker.test(input, expect, 407))
 
 #     def test_undeclared_8(self):
@@ -179,7 +180,7 @@ class CheckerSuite(unittest.TestCase):
 
 
 
-    # TEST REDECLARATION
+#     # TEST REDECLARATION
 #     def test_redeclared_1(self):
 #         input ="""
 # number a <- 2
@@ -386,7 +387,7 @@ class CheckerSuite(unittest.TestCase):
 
 
 
-    # TEST NO ENTRY POINT
+#     # TEST NO ENTRY POINT
 #     def test_noentrypoint_1(self):
 #         input ="""
 # number a <- 2
@@ -524,7 +525,7 @@ class CheckerSuite(unittest.TestCase):
 
 
 
-#   TEST NOT IN LOOP
+# #   TEST NOT IN LOOP
 #     def test_notinloop_1(self):
 #         input = """
 # func main()

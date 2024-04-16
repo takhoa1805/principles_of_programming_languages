@@ -1,8 +1,8 @@
 
 func f()
-begin
-    continue
-end
+    begin
+        continue
+    end
 func main()
     begin
         for i until i by [1]

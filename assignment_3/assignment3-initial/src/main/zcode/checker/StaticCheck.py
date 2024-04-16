@@ -22,6 +22,10 @@ class StaticChecker(BaseVisitor, Utils):
     def visitProgram(self, ast:Program, param):
         param =[['readNumber','writeNumber','readBool','writeBool','readString','writeString']]
         print(ast.decl)
+
+        if ast.decl is None:
+            raise NoEntryPoint()
+
         for decl in ast.decl:
             self.visit(decl,param)
 
@@ -34,16 +38,16 @@ class StaticChecker(BaseVisitor, Utils):
         
 
     def visitVarDecl(self, ast:VarDecl, param):
-        print("Var decl is called")
-
+        name = self.getIdName(ast.name,param)
+        print("Var decl is called: name("+str(name)+") type(" + str(ast.varType)+") - modifier(" + str(ast.modifier) +")")
         varType = ast.varType
         modifier = ast.modifier
 
         # CHECK FOR UNDECLARATION OF BOTH VAR AND FUNC
-        self.visit(ast.varInit,param)
+        if ast.varInit is not None:
+            self.visit(ast.varInit,param)
 
 
-        name = self.getIdName(ast.name,param)
         if name in param[0]:
             raise Redeclared('Variable',name)
 
@@ -60,10 +64,11 @@ class StaticChecker(BaseVisitor, Utils):
 
     def visitFuncDecl(self, ast: FuncDecl, param):
         print("Func decl is called")
-        name = self.getIdName(ast.name,param)
-        body = self.visit(ast.body,param)
 
-        # print(body)
+        name = self.getIdName(ast.name,param)
+
+        print("Name: " + str(name))
+        print("Current scope: " + str(param[0]))
 
         if name in param[0]:
             raise Redeclared('Function',name)
@@ -74,10 +79,14 @@ class StaticChecker(BaseVisitor, Utils):
         for decl in ast.param:
             self.myVisitParameter(decl,env)
 
-        # To travel through every statements
-        for stmt in body:
-            self.visit(stmt,env)
+        # # To travel through every statements
+        # for stmt in body:
+        #     self.visit(stmt,env)
 
+        if (ast.body is None):
+            body = []
+        else: 
+            body = self.visit(ast.body,env)
 
         param[0] += [name]
 
@@ -92,8 +101,20 @@ class StaticChecker(BaseVisitor, Utils):
     def visitStringType(self, ast:StringType, param):
         return StringType()
 
+    # IN DECLARATION
     def visitArrayType(self, ast:ArrayType, param):
         print("Visit array type")
+        print("Array size: " + str(ast.size))
+        print("Array element type: " + str(ast.eleType))
+        
+        size_list = ast.size
+
+        for size in size_list:
+            self.visit(size,param)
+
+        eleType = self.visit(ast.eleType,param)
+
+        return eleType
 
     # VISIT BINARY OPERATORS
     def visitBinaryOp(self, ast:BinaryOp, param):
@@ -150,8 +171,14 @@ class StaticChecker(BaseVisitor, Utils):
                 return
         raise Undeclared("Function",str(ast.name))
 
+    # IN EXPRESSION
     def visitArrayCell(self, ast:ArrayCell, param):
         print("Visit array cell")
+        self.visit(ast.arr, param)
+        idx_list = ast.idx
+
+        for idx in idx_list:
+            self.visit(idx,param)
 
     # STATEMENT BLOCK 
     def visitBlock(self, ast:Block, param):
@@ -174,7 +201,6 @@ class StaticChecker(BaseVisitor, Utils):
         thenStmt = self.visit(ast.thenStmt,param)
         elifStmt_list = ast.elifStmt
         for elifStmt in elifStmt_list:
-            pass
             self.visit(elifStmt[0],param)
             self.visit(elifStmt[1],param)
 
@@ -261,4 +287,4 @@ class StaticChecker(BaseVisitor, Utils):
         return StringType()
 
     def visitArrayLiteral(self, ast:ArrayLiteral, param):
-        print("Visit array literal")
+        print("Visit array literal: " + str(ast))

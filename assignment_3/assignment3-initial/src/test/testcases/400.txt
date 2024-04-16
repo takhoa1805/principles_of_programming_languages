@@ -1,11 +1,12 @@
 
+number a[5] <- [1,2,3,4,5]
+number c <- 5
+
+func f()
+
 func main()
     begin
-        if (true) begin
-            break
-        end
-        elif (false) begin
-            continue
-        end
-        else return true
+        number a <- a[5]
+        f(a[5])
     end
+
