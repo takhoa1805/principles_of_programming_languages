@@ -24,6 +24,12 @@ class StaticChecker(BaseVisitor, Utils):
         print(ast.decl)
         for decl in ast.decl:
             self.visit(decl,param)
+
+        for ids in param:
+            if 'main' not in ids:
+                raise NoEntryPoint()
+
+        print("param after program: " + str(param))
         # print(ast)
         
 
@@ -104,9 +110,19 @@ class StaticChecker(BaseVisitor, Utils):
         # CHECKING UNDECLARED
         oeprand = self.visit(ast.operand,param)
 
+
+
     def visitCallExpr(self, ast:CallExpr, param):
         print("Visit call expr")
+        name = self.getIdName(ast.name,param)
+        args = ast.args
+        print("Call expr with name = " + str(name) +" expr = "+ str(args))
+        self.visitFunctionId(ast.name,param)
+        
+        for id in args:
+            self.visit(id,param)
 
+        
 
 
 
@@ -139,20 +155,32 @@ class StaticChecker(BaseVisitor, Utils):
 
     # STATEMENT BLOCK 
     def visitBlock(self, ast:Block, param):
-        print("Visit statement block ")
+        print("Visit statement block: " + str(ast.stmt))
+        stmt_list = ast.stmt
+
+        for stmt in stmt_list:
+            self.visit(stmt,param)
+
         return ast.stmt
 
     # IF STATEMENT
     def visitIf(self, ast:If, param):
-        print("Visit if statement")
+        print("Visit if statement " + str(ast))
 
         # CHECK UNDECLARED IDENTIFIER
         expr = self.visit(ast.expr,param)
 
         # VISIT ALL STATEMENTS
         thenStmt = self.visit(ast.thenStmt,param)
-        elifStmt = self.visit(ast.elifStmt,param)
-        elseStmt = self.visit(ast.elseStmt,param)
+        elifStmt_list = ast.elifStmt
+        for elifStmt in elifStmt_list:
+            pass
+            self.visit(elifStmt[0],param)
+            self.visit(elifStmt[1],param)
+
+        if (ast.elseStmt is not None):
+            elseStmt = self.visit(ast.elseStmt,param)
+        
 
 
 
@@ -163,7 +191,9 @@ class StaticChecker(BaseVisitor, Utils):
         
         # IDENTIFIER IN FOR LOOP MUST BE DEFINED
         name = self.getIdName(ast.name,param)
-        env =[[name]] + param
+
+        # IS IN LOOP FLAG AT FIRST ELEMENT
+        env =[[True]]+[[name]] + param
 
 
         condExpr = self.visit(ast.condExpr,env)
@@ -175,11 +205,17 @@ class StaticChecker(BaseVisitor, Utils):
 
     #CONTINUE STATEMENT
     def visitContinue(self, ast:Continue, param):
-        print("Visit continue statement")
+        print("Visit continue statement: " + str(ast))
+        print(param)
+        if len(param[0]) == 0 or  not param[0][0]:
+            raise MustInLoop(ast)
 
     # BREAK STATEMENT
     def visitBreak(self, ast:Break, param):
-        print("Visit break statement")
+        print("Visit break statement: " + str(ast))
+        if len(param[0]) == 0 or  not param[0][0]:
+            raise MustInLoop(ast)
+
 
     # RETURN STATEMENT
     def visitReturn(self, ast:Return, param):

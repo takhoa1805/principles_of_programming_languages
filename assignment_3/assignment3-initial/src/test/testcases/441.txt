@@ -1,0 +1,9 @@
+
+number a <- 2
+number b <- 5
+var z <- 5
+
+func f(number a, string b)
+begin   
+    number c <-5
+end

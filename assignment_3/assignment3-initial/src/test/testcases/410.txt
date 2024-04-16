@@ -1,0 +1,5 @@
+
+func main()
+begin
+    number x <- 54 + f(a,b)
+end

@@ -1,0 +1,10 @@
+
+
+var a <- 5
+
+func MAIN()
+begin
+end
+
+number b <- 6
+

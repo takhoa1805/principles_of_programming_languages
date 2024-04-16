@@ -7,37 +7,39 @@ from AST import *
 class CheckerSuite(unittest.TestCase):
 #     def test_general(self):
 #         input = """
-# func f(number j)
-# begin
-# end
-
 # func main()
-# begin
-#     a(5)
-# end
+#     begin
+#         if (true) begin
+#             break
+#         end
+#         elif (false) begin
+#             continue
+#         end
+#         else return true
+#     end
 # """
-#         expect ="Undeclared Function: a"
+#         expect ="Break Not In Loop"
 #         self.assertTrue(TestChecker.test(input, expect, 400))
 
 
 # TEST UNDECLARATION
 
-    def test_undeclared_1(self):
-        input = """
-number a <- f(2)
+#     def test_undeclared_1(self):
+#         input = """
+# number a <- f(2)
 
-func f(number x)
-begin
-end
+# func f(number x)
+# begin
+# end
 
-func main()
-    begin
+# func main()
+#     begin
 
-    end
+#     end
 
-"""
-        expect="Undeclared Function: f"
-        self.assertTrue(TestChecker.test(input,expect,401))
+# """
+#         expect="Undeclared Function: f"
+#         self.assertTrue(TestChecker.test(input,expect,401))
 
 #     def test_undeclared_2(self):
 #         input = """
@@ -76,7 +78,7 @@ func main()
 # end
 
 # """
-#         expect ="Undeclared Function: g"
+#         expect ="Undeclared Function: f"
 #         self.assertTrue(TestChecker.test(input,expect,404))
 
 #     def test_undeclared_5(self):
@@ -138,6 +140,42 @@ func main()
 # """
 #         expect ="Redeclared Variable: x"
 #         self.assertTrue(TestChecker.test(input,expect,409))
+
+#     def test_undeclared_10(self):
+#         input = """
+# func main()
+# begin
+#     number x <- 54 + f(a,b)
+# end
+# """
+#         expect = "Undeclared Function: f"
+#         self.assertTrue(TestChecker.test(input, expect, 410))
+
+#     def test_undeclared_11(self):
+#         input = """
+# func f(number a)
+# begin 
+# end
+# func main()
+# begin
+#     f(a)
+# end
+# """
+#         expect = "Undeclared Identifier: a"
+#         self.assertTrue(TestChecker.test(input, expect, 411))
+
+#     def test_undeclared_11(self):
+#         input = """
+# func f(number a)
+# begin 
+# end
+# func main()
+# begin
+#     number x <- f(a)
+# end
+# """
+#         expect = "Undeclared Identifier: a"
+#         self.assertTrue(TestChecker.test(input, expect, 412))
 
 
 
@@ -344,3 +382,324 @@ func main()
 # """
 #         expect = ""
 #         self.assertTrue(TestChecker.test(input, expect, 432))
+
+
+
+
+    # TEST NO ENTRY POINT
+#     def test_noentrypoint_1(self):
+#         input ="""
+# number a <- 2
+# number b <- 5
+# var z <- 5
+
+# func f(number a, string b)
+# begin   
+#     number c <-5
+# end
+# """
+#         expect = "No Entry Point"
+#         self.assertTrue(TestChecker.test(input, expect, 441))
+
+#     def test_noentrypoint_2(self):
+#         input ="""
+# number a <- 2
+# number b <- 5
+# var z <- 5
+
+# """
+#         expect = "No Entry Point"
+#         self.assertTrue(TestChecker.test(input, expect, 442))
+
+#     def test_noentrypoint_3(self):
+#         input ="""
+
+# func Main()
+# begin
+# end
+
+# number a <- 5
+# number c <- 6
+
+
+# """
+#         expect = "No Entry Point"
+#         self.assertTrue(TestChecker.test(input, expect, 443))
+
+
+#     def test_noentrypoint_4(self):
+#         input ="""
+
+# func Main()
+# begin    
+#     number a <- 5
+#     number c <- 6
+# end
+
+
+
+# """
+#         expect = "No Entry Point"
+#         self.assertTrue(TestChecker.test(input, expect, 444))
+
+#     def test_noentrypoint_5(self):
+#         input ="""
+
+# func Main()
+# begin    
+# end
+
+
+
+# """
+#         expect = "No Entry Point"
+#         self.assertTrue(TestChecker.test(input, expect, 445))
+
+
+#     def test_noentrypoint_6(self):
+#         input ="""
+
+# var a <- 5
+
+# """
+#         expect = "No Entry Point"
+#         self.assertTrue(TestChecker.test(input, expect, 446))
+
+
+#     def test_noentrypoint_7(self):
+#         input ="""
+
+# func MAIN()
+# begin
+# end
+
+# """
+#         expect = "No Entry Point"
+#         self.assertTrue(TestChecker.test(input, expect, 447))
+
+
+#     def test_noentrypoint_8(self):
+#         input ="""
+
+# var a <- 5
+
+# func MAIN()
+# begin
+# end
+
+# """
+#         expect = "No Entry Point"
+#         self.assertTrue(TestChecker.test(input, expect, 448))
+
+
+#     def test_noentrypoint_9(self):
+#         input ="""
+
+# var a <- 5
+
+# func MAIN()
+# begin
+# end
+
+# number b <- 6
+
+# """
+#         expect = "No Entry Point"
+#         self.assertTrue(TestChecker.test(input, expect, 449))
+
+
+#     def test_noentrypoint_10(self):
+#         input ="""
+
+# var a <- 5
+
+# func MAIN()
+# begin
+#     number b <- 5
+# end
+
+# """
+#         expect = "No Entry Point"
+#         self.assertTrue(TestChecker.test(input, expect, 450))
+
+
+
+#   TEST NOT IN LOOP
+#     def test_notinloop_1(self):
+#         input = """
+# func main()
+#     begin
+#         for i until i by [1]
+#         begin
+#             number a <- 5
+#             number b <- 6
+
+#             continue
+#             break
+
+#         end
+
+#         break
+#     end
+# """
+#         expect ="Break Not In Loop"
+#         self.assertTrue(TestChecker.test(input, expect, 451))
+
+
+
+#     def test_notinloop_2(self):
+#         input = """
+# func main()
+#     begin
+
+#         break
+#     end
+# """
+#         expect ="Break Not In Loop"
+#         self.assertTrue(TestChecker.test(input, expect, 452))
+
+
+#     def test_notinloop_3(self):
+#         input = """
+# func main()
+#     begin
+#         if (true) begin
+#             break
+#         end
+#         elif (false) begin
+#             continue
+#         end
+#         else return true
+#     end
+# """
+#         expect ="Break Not In Loop"
+#         self.assertTrue(TestChecker.test(input, expect, 453))
+
+
+#     def test_notinloop_4(self):
+#         input = """
+# func main()
+#     begin
+#         if (true) begin
+#             continue
+#         end
+#         elif (false) begin
+#             break
+#         end
+#         else return true
+#     end
+# """
+#         expect ="Continue Not In Loop"
+#         self.assertTrue(TestChecker.test(input, expect, 454))
+
+
+#     def test_notinloop_5(self):
+#         input = """
+# func main()
+#     begin
+#         if (true) continue
+#         else break
+#     end
+# """
+#         expect ="Continue Not In Loop"
+#         self.assertTrue(TestChecker.test(input, expect, 455))
+
+
+#     def test_notinloop_6(self):
+#         input = """
+# func main()
+#     begin
+#         for i until i by [1]
+#         begin
+#             writeNumber(1)
+#             break
+#         end
+#     end
+# """
+#         expect =""
+#         self.assertTrue(TestChecker.test(input, expect, 456))
+
+
+#     def test_notinloop_7(self):
+#         input = """
+# func main()
+#     begin
+#         for i until i by [1]
+#         begin
+#             writeNumber(1)
+#             if (true) break
+#         end
+#     end
+# """
+#         expect =""
+#         self.assertTrue(TestChecker.test(input, expect, 457))
+
+
+#     def test_notinloop_8(self):
+#         input = """
+# func main()
+#     begin
+#         for i until i by [1]
+#         begin
+#             writeNumber(1)
+#             if (true) break
+#             else begin
+#                 continue
+#             end
+#         end
+#     end
+# """
+#         expect =""
+#         self.assertTrue(TestChecker.test(input, expect, 458))
+
+
+#     def test_notinloop_9(self):
+#         input = """
+# func main()
+#     begin
+#         for i until i by [1]
+#         begin
+#             writeNumber(1)
+#             if (true) break
+#             else begin
+#                 continue
+#             end
+#         end
+#         break
+#     end
+# """
+#         expect ="Break Not In Loop"
+#         self.assertTrue(TestChecker.test(input, expect, 459))
+
+
+#     def test_notinloop_10(self):
+#         input = """
+# func f()
+#     begin
+#         continue
+#     end
+# func main()
+#     begin
+#         for i until i by [1]
+#         begin
+#             writeNumber(1)
+#             if (true) break
+#             else begin
+#                 continue
+#             end
+#         end
+#         break
+#     end
+# """
+#         expect ="Continue Not In Loop"
+#         self.assertTrue(TestChecker.test(input, expect, 460))
+
+
+
+
+
+
+
+
+
+

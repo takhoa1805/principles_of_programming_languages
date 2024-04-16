@@ -1,0 +1,8 @@
+
+func f(number a)
+begin 
+end
+func main()
+begin
+    f(a)
+end

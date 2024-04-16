@@ -1,0 +1,12 @@
+
+func main()
+    begin
+        for i until i by [1]
+        begin
+            writeNumber(1)
+            if (true) break
+            else begin
+                continue
+            end
+        end
+    end

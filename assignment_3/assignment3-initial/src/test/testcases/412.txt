@@ -1,0 +1,8 @@
+
+func f(number a)
+begin 
+end
+func main()
+begin
+    number x <- f(a)
+end

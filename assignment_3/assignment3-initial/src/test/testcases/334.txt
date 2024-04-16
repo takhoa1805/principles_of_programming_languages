@@ -1,0 +1,11 @@
+
+        func main()
+            begin
+
+                number arr[5] <- [1, 2, 3, 4, 5]
+
+                var index <- 2
+
+                
+            end
+        

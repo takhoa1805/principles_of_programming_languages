@@ -1,0 +1,10 @@
+
+
+func Main()
+begin
+end
+
+number a <- 5
+number c <- 6
+
+
