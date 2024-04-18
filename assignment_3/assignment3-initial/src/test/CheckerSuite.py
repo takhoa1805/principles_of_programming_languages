@@ -7,12 +7,14 @@ from AST import *
 class CheckerSuite(unittest.TestCase):
     def test_general(self):
         input = """
+func a() return true
+        
 func main()
     begin
-        var a <- 1 + 2
-        var b <- - 5
-        var c <- not true
+        number b <- 1 + 2 + a()
+        return 5
     end
+
 
 """
         expect =""

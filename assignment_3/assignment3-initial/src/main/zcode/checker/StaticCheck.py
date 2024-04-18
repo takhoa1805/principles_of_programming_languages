@@ -20,7 +20,7 @@ class StaticChecker(BaseVisitor, Utils):
 
 
     def visitProgram(self, ast:Program, param):
-        param =[['readNumber','writeNumber','readBool','writeBool','readString','writeString']]
+        param =[{'readNumber':None,'writeNumber':None,'readBool':None,'writeBool':None,'readString':None,'writeString':None}]
         print(ast.decl)
 
         if ast.decl is None:
@@ -40,7 +40,9 @@ class StaticChecker(BaseVisitor, Utils):
     def visitVarDecl(self, ast:VarDecl, param):
         name = self.getIdName(ast.name,param)
         print("Var decl is called: name("+str(name)+") type(" + str(ast.varType)+") - modifier(" + str(ast.modifier) +")")
-        varType = ast.varType
+        varType = str(ast.varType) if ast.varType is not None else None
+        # varType = ast.varType
+
         modifier = ast.modifier
 
         # CHECK FOR UNDECLARATION OF BOTH VAR AND FUNC
@@ -51,16 +53,24 @@ class StaticChecker(BaseVisitor, Utils):
         if name in param[0]:
             raise Redeclared('Variable',name)
 
-        param[0] += [name]
+        # param[0] += {name:str(varType)}
+        param[0][name] = varType
 
     def myVisitParameter(self,ast:VarDecl,param):
         print("Param decl is called")
+        # varType = ast.varType
+        varType = str(ast.varType) if ast.varType is not None else None
+
 
         name = self.getIdName(ast.name,param)
 
         if name in param[0]:
             raise Redeclared('Parameter',name)
-        param[0] += [name] 
+        
+        # param[0] += {name:str(varType)}
+        param[0][name] = varType
+
+
 
     def visitFuncDecl(self, ast: FuncDecl, param):
         print("Func decl is called")
@@ -73,7 +83,7 @@ class StaticChecker(BaseVisitor, Utils):
         if name in param[0]:
             raise Redeclared('Function',name)
         
-        env = [[]] + param
+        env = [{}] + param
 
         # To check redeclaration in function's parameters.
         for decl in ast.param:
@@ -88,7 +98,11 @@ class StaticChecker(BaseVisitor, Utils):
         else: 
             body = self.visit(ast.body,env)
 
-        param[0] += [name]
+        # param[0] += {name:body}
+        param[0][name] = str(body)
+
+        print("Body of function if it returns something: " + str(body))
+        # print(self.funcType)
 
         
 
@@ -190,7 +204,9 @@ class StaticChecker(BaseVisitor, Utils):
         for id in args:
             self.visit(id,param)
 
-        
+        for env in param:
+            if name in env:
+                return env[name]
 
 
 
@@ -231,11 +247,15 @@ class StaticChecker(BaseVisitor, Utils):
     def visitBlock(self, ast:Block, param):
         print("Visit statement block: " + str(ast.stmt))
         stmt_list = ast.stmt
+        returnType = None
 
         for stmt in stmt_list:
-            self.visit(stmt,param)
+            visitStmt=self.visit(stmt,param)
+            if (visitStmt is not None):
+                returnType = visitStmt
 
-        return ast.stmt
+        # return ast.stmt
+        return returnType
 
     # IF STATEMENT
     def visitIf(self, ast:If, param):
@@ -292,9 +312,10 @@ class StaticChecker(BaseVisitor, Utils):
 
     # RETURN STATEMENT
     def visitReturn(self, ast:Return, param):
-        print("Visit return statement")
         # VISIT EXPRESSION
         expr = self.visit(ast.expr,param)
+        print("Visit return statement: " + str(expr))
+        return expr
 
     # ASSIGN STATEMENT
     def visitAssign(self, ast:Assign, param):
