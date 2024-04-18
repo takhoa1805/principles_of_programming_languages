@@ -7,15 +7,11 @@ from AST import *
 class CheckerSuite(unittest.TestCase):
     def test_general(self):
         input = """
-number a[5] <- [1,2,3,4,5]
-number c <- 5
-
-func f()
-
 func main()
     begin
-        number a <- a[5]
-        f(a[5])
+        var a <- 1 + 2
+        var b <- - 5
+        var c <- not true
     end
 
 """
@@ -697,10 +693,139 @@ func main()
 
 
 
+# TEST TYPE MISMATCH IN EXPRESSION
+
+#     def test_typemismatchinexpression_1(self):
+#         input = """
+# dynamic x
+# func main()
+# begin
+#     x <- [1, 2, 3, 4, 5, 6]
+#     var y <- x[0, 0] + 1
+#     writeNumber(y)
+# end
+# """
+#         expect ="Type Mismatch In Expression: ArrayCell(Id(x), [NumLit(0.0), NumLit(0.0)])"
+#         self.assertTrue(TestChecker.test(input, expect, 461))
+
+#     def test_typemismatchinexpression_2(self):
+#         input = """
+# func f(number x[2, 3])
+#     return x[2]
+
+# func main()
+# begin
+#     number x[2, 3] <- [[1, 2, 3], [4, 5, 6]]
+#     writeNumber(f()[2])
+# end
+# """
+#         expect = "Type Mismatch In Expression: CallExpr(Id(f), [])"
+#         self.assertTrue(TestChecker.test(input, expect, 462))
+
+
+#     def test_typemismatchinexpression_3(self):
+#         input = """
+# func main()
+# begin
+#     number x <- 2 + true
+#     writeNumber(x)
+# end
+# """
+#         expect = "Type Mismatch In Expression: BinaryOp(+, NumLit(2.0), BooleanLit(True))"
+#         self.assertTrue(TestChecker.test(input, expect, 463))
 
 
 
+#     def test_typemismatchinexpression_4(self):
+#         input = """
+# func main()
+# begin
+#     var x <- [[[[1, 2]], [3, 4, 5]], [[6, 7, 8], [9, 10, 11]]]
+#     writeNumber(x)
+# end
+# """
+#         expect = "Type Mismatch In Expression: ArrayLit(ArrayLit(ArrayLit(ArrayLit(NumLit(1.0), NumLit(2.0))), ArrayLit(NumLit(3.0), NumLit(4.0), NumLit(5.0))), ArrayLit(ArrayLit(NumLit(6.0), NumLit(7.0), NumLit(8.0)), ArrayLit(NumLit(9.0), NumLit(10.0), NumLit(11.0))))"
+#         self.assertTrue(TestChecker.test(input, expect, 464))
 
 
+#     def test_typemismatchinexpression_5(self):
+#         input = """
+# func f(number x)
+# begin
+#     if (x = 0) return 0
+#     elif (x = 1) return 1
+#     else return f(x - 1) + f(x - 2)
+# end
+    
+# func main()
+# begin
+#     dynamic a
+#     number x <- f(a)
+#     a[0] <- [1, 2, 3]
+# end
+# """
+#         expect = "Type Mismatch In Expression: ArrayCell(Id(a), [NumLit(0.0)])"
+#         self.assertTrue(TestChecker.test(input, expect, 465))
 
 
+#     def test_typemismatchinexpression_6(self):
+#         input = """
+# func main()
+# begin
+#     dynamic x
+#     if (x) writeString("x is infer to true value")
+#     else writeString("x is infer to false value")
+#     x <- 1 + true
+# end
+# """
+#         expect = "Type Mismatch In Expression: BinaryOp(+, NumLit(1.0), BooleanLit(True))"
+#         self.assertTrue(TestChecker.test(input, expect, 466))
+
+#     def test_typemismatchinexpression_7(self):
+#         input = """
+# func f()
+# begin
+#     dynamic x
+#     x <- (x - 2) * (x + true)
+# end
+# """
+#         expect = "Type Mismatch In Expression: BinaryOp(+, Id(x), BooleanLit(True))"
+#         self.assertTrue(TestChecker.test(input, expect, 467))
+
+#     def test_typemismatchinexpression_8(self):
+#         input = """
+# number a <- 1 + "Hello"
+# func main()
+#     return
+# """
+#         expect = "Type Mismatch In Expression: BinaryOp(+, NumLit(1.0), StringLit(Hello))"
+#         self.assertTrue(TestChecker.test(input, expect, 468))
+
+
+#     def test_typemismatchinexpression_9(self):
+#         input = """
+# func f(number a[3], number b[3])
+#     return
+
+# func main()
+# begin
+#     f([1, 3, 2], [1, "Hello", 2])
+# end
+# """
+#         expect = "Type Mismatch In Expression: ArrayLit(NumLit(1.0), StringLit(Hello), NumLit(2.0))"
+#         self.assertTrue(TestChecker.test(input, expect, 469))
+
+
+#     def test_typemismatchinexpression_10(self):
+#         input = """
+# func f(number x[2, 3])
+#     return x[0]
+
+# func main()
+# begin
+#     dynamic x <- f([[1, 2, 3], [4, 5, 6]])[2, 3]
+#     writeNumber(x)
+# end
+# """
+#         expect = "Type Mismatch In Expression: ArrayCell(CallExpr(Id(f), [ArrayLit(ArrayLit(NumLit(1.0), NumLit(2.0), NumLit(3.0)), ArrayLit(NumLit(4.0), NumLit(5.0), NumLit(6.0)))]), [NumLit(2.0), NumLit(3.0)])"
+#         self.assertTrue(TestChecker.test(input, expect, 470))

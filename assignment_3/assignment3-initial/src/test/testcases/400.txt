@@ -1,12 +1,8 @@
 
-number a[5] <- [1,2,3,4,5]
-number c <- 5
-
-func f()
-
 func main()
     begin
-        number a <- a[5]
-        f(a[5])
+        var a <- 1 + 2
+        var b <- - 5
+        var c <- not true
     end
 

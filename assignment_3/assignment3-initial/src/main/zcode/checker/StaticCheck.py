@@ -93,12 +93,15 @@ class StaticChecker(BaseVisitor, Utils):
         
 
     def visitNumberType(self, ast:NumberType, param):
+        print("Visit number type")
         return NumberType()
 
     def visitBoolType(self, ast:BoolType, param):
+        print("Visit boolean type")
         return BoolType()
 
     def visitStringType(self, ast:StringType, param):
+        print("Visit string type")
         return StringType()
 
     # IN DECLARATION
@@ -122,14 +125,58 @@ class StaticChecker(BaseVisitor, Utils):
 
         # CHECKING UNDECLARED
         left = self.visit(ast.left,param)
+        print("Left operand: " + str(left))
         right = self.visit(ast.right,param)
+        print("Right operand: " + str(right))
+
+        # OPERATIONS ON NUMBER
+        if ast.op in ["+", "-","*","/","%"]:
+            if str(right)=="NumberType" and str(left) == "NumberType":
+                return left
+            else:
+                raise TypeMismatchInExpression(ast)
+        # OPERATIONS ON BOOLEAN
+        elif ast.op in ["and","or"]:
+            if str(right)=="BoolType" and str(left)=="BoolType":
+                return left
+            else:
+                raise TypeMismatchInExpression(ast)
+            
+        # OPERATIONS ON REALATIONAL OPERANDS:
+        elif ast.op in ["=", "!=", "<",">",">=","<=","=="]:
+            if str(left) == str(right):
+                return BoolType()
+            else:
+                raise TypeMismatchInExpression(ast)
+
+        # OPERATIONS ON STRING
+        elif ast.op in ["..."]:
+            if str(left) == "StringType" and str(right) == "StringType":
+                return left
+            else:
+                raise TypeMismatchInExpression(ast)
+
 
     # VISIT UNARY OPERATORS
     def visitUnaryOp(self, ast:UnaryOp, param):
         print("Visit unary op: " + str(ast.op))
 
         # CHECKING UNDECLARED
-        oeprand = self.visit(ast.operand,param)
+        operand = self.visit(ast.operand,param)
+        
+        # NEGATION OPERATOR
+        if ast.op == "-":
+            if str(operand) == "NumberType":
+                return operand
+            else:
+                raise TypeMismatchInExpression(ast)
+        elif ast.op =="not":
+            if str(operand) == "BoolType":
+                return operand
+            else:
+                raise TypeMismatchInExpression(ast)
+
+
 
 
 
@@ -278,13 +325,16 @@ class StaticChecker(BaseVisitor, Utils):
 
 
     def visitNumberLiteral(self, ast:NumberLiteral, param):
+        print("Visit number literal: " + str(ast.value))
         return NumberType()
 
     def visitBooleanLiteral(self, ast:BooleanLiteral, param):
+        print("Visit boolean literal: " + str(ast.value) )
         return BoolType()
 
     def visitStringLiteral(self, ast:StringLiteral, param):
+        print("visit string literal: "+ str(ast.value))
         return StringType()
 
     def visitArrayLiteral(self, ast:ArrayLiteral, param):
-        print("Visit array literal: " + str(ast))
+        print("Visit array literal: " + str(ast.value))

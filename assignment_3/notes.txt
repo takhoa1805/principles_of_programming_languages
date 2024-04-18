@@ -45,3 +45,14 @@ WORKING PROGRESS: Declare stuffs
             ===> Để lấy tên của identifier sử dụng hàm getIdName()
 
 
+- Type Mismatch in expression: 4 data types: String, Boolean, Number (float), Array
+	- Binary and unary expression:
+		- Operators for NUMBER operands' type: PLUS, MINUS, MULTIPLY, DIVIDE, MODULO, NEGATION ===> Result in a NUMBER type
+		- Operators for BOOLEAN operands' type: not and or ===> result in a BOOLEAN type
+		- Operators for STRING operands' type: ...  (concatenation)===> result in a STRING type
+		- Operators for REALATIONAL operations: NUMBER - (= != < > <= >=) STRING - (==)
+
+		- Cần return kiểu từ CallExpr cũng như ArrExpr
+
+
+
