@@ -52,7 +52,14 @@ WORKING PROGRESS: Declare stuffs
 		- Operators for STRING operands' type: ...  (concatenation)===> result in a STRING type
 		- Operators for REALATIONAL operations: NUMBER - (= != < > <= >=) STRING - (==)
 
-		- Cần return kiểu từ CallExpr cũng như ArrExpr
+		- Cần return kiểu từ CallExpr cũng như ArrExpr:
+		
+		- CallExpr: Theo như mô tả thì function chỉ được khai báo ở global scope. Vì vậy mà để lưu trữ được return type của một function nào đó, cần có một data structure hoạt động ở global scope. Mỗi khi function được khai báo thì sẽ lưu lại return type của function đó bằng data structure. Vậy thì data structure sử dụng sẽ là dict ==> ví dụ: funcType['<function identifier>'] = NumberType/BoolType/StringType/ArrayType/None. Return type sẽ được truy xuất thông qua việc trả về return type trong hàm visitBlock.
 
+
+		- Current problem:
+			- làm thế nào để xác định type của một hàm dựa trên return value ===> nhiều return statement với kiểu return khác nhau xử lý như thế nào?
+			- Làm thế nào để check value truyền vào param có đúng hay không
+            - Array xử lý như thế nào
 
 
