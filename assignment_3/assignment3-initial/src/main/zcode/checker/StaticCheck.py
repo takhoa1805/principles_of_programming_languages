@@ -45,6 +45,7 @@ class StaticChecker(BaseVisitor, Utils):
 
         modifier = ast.modifier
 
+
         # CHECK FOR UNDECLARATION OF BOTH VAR AND FUNC
         if ast.varInit is not None:
             self.visit(ast.varInit,param)
@@ -52,9 +53,23 @@ class StaticChecker(BaseVisitor, Utils):
 
         if name in param[0]:
             raise Redeclared('Variable',name)
+        
+        
+
+        # TYPE CHECKING PART
+        # IF declaration using var and dynamic
+        exprType = (self.visit(ast.varInit,param)) if ast.varInit is not None else None
+        if str(ast.varType) == 'None':
+            print("fdsafjoisdfjio   ")
+            finalType = exprType
+        else:
+            if str(exprType) != str(ast.varType):
+                raise TypeMismatchInExpression(exprType)
+            else:
+                finalType = exprType
 
         # param[0] += {name:str(varType)}
-        param[0][name] = varType
+        param[0][name] = finalType
 
     def myVisitParameter(self,ast:VarDecl,param):
         print("Param decl is called")
