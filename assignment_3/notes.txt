@@ -68,10 +68,11 @@ WORKING PROGRESS: Declare stuffs
 					- Return	===> Trả về type của expression 
 					- Function call ===> Không cần trả về gì. Tuy nhiên cần check kiểu argument truyền vào có đúng với parameter được define cho hàm đó hay không
 					- Block ===> Trả về type nếu như trong block statement có tồn tại return statemnet
+					===> Đã xử lý xong, các statement đều trả về đúng như mong đợi
 
 				- Ở thời điểm hiện tại chỉ assume return type của một hàm dựa trên giá trị trả về của return statement. Tuy nhiên, phải chăng các statement khác cũng trả về một statement gì đó ?
 
-			- Làm thế nào để check value truyền vào param có đúng hay không
-			- Array xử lý như thế nào
+			- Làm thế nào để check value truyền vào param có đúng hay không ===> PASS FOR NOW
+			- Array xử lý như thế nào? Array bao gồm ArrayCell và  ArrayLiteral, ArrayType
 
 

@@ -7,11 +7,10 @@ from AST import *
 class CheckerSuite(unittest.TestCase):
     def test_general(self):
         input = """
-var a <- 5
-        
+
 func main()
     begin
-        
+        number a[5] <- [1,2]
     end
 
 

@@ -13,6 +13,7 @@ class StaticChecker(BaseVisitor, Utils):
     def __init__(self, ast: Program) -> None:
         self.ast = ast
         self.env =[[]]
+        self.funcParam =[[{}]]
 
     def check(self):
         self.visit(self.ast,self.env)
@@ -47,8 +48,7 @@ class StaticChecker(BaseVisitor, Utils):
 
 
         # CHECK FOR UNDECLARATION OF BOTH VAR AND FUNC
-        if ast.varInit is not None:
-            self.visit(ast.varInit,param)
+        exprType = (self.visit(ast.varInit,param)) if ast.varInit is not None else None
 
 
         if name in param[0]:
@@ -57,16 +57,17 @@ class StaticChecker(BaseVisitor, Utils):
         
 
         # TYPE CHECKING PART
-        # IF declaration using var and dynamic
-        exprType = (self.visit(ast.varInit,param)) if ast.varInit is not None else None
+        
+        # Declare using modifier => Infertype from initial expression
         if str(ast.varType) == 'None':
-            print("fdsafjoisdfjio   ")
-            finalType = exprType
+            finalType = str(exprType)
+        
+        # Declare primitive types => Variable type is varType
         else:
-            if str(exprType) != str(ast.varType):
-                raise TypeMismatchInExpression(exprType)
+            if str(exprType) != str(ast.varType) and str(exprType) != 'None':
+                raise TypeMismatchInExpression(ast)
             else:
-                finalType = exprType
+                finalType = str(ast.varType)
 
         # param[0] += {name:str(varType)}
         param[0][name] = finalType
@@ -82,8 +83,13 @@ class StaticChecker(BaseVisitor, Utils):
         if name in param[0]:
             raise Redeclared('Parameter',name)
         
-        # param[0] += {name:str(varType)}
+        # Add vartype according to its name
         param[0][name] = varType
+        # Add to param declaration list of this function'
+
+        # PASS FOR NOW
+
+
 
 
 
@@ -146,7 +152,7 @@ class StaticChecker(BaseVisitor, Utils):
 
         eleType = self.visit(ast.eleType,param)
 
-        return eleType
+        return arrayType()
 
     # VISIT BINARY OPERATORS
     def visitBinaryOp(self, ast:BinaryOp, param):
@@ -237,7 +243,7 @@ class StaticChecker(BaseVisitor, Utils):
         print("Identifier environment: "+str(param))
         for id in param:
             if (ast.name in id):
-                return 
+                return id[ast.name]
         raise Undeclared("Identifier",str(ast.name))
         
     # VISIT FUNCTION IDENTIFIER ===> FOR FUNCTION UNDECLARATION CHECKING ONLY
@@ -334,11 +340,16 @@ class StaticChecker(BaseVisitor, Utils):
 
     # ASSIGN STATEMENT
     def visitAssign(self, ast:Assign, param):
-        print("Visit assign statement")
         # CHECK IF RHS EXPRESSION CONTAINS UNDECLARED IDENTIFIER
         rhs = self.visit(ast.rhs,param)
         # CHECK IF LHS EXPRESSION CONTAINS UNDECLARED IDENTIFIER
         lhs = self.visit(ast.lhs,param)
+        print("Visit assign statement: ast: "+ str(ast)+" lhs = "+str(lhs) + " rhs = "+str(rhs))
+
+        # CHECK IF BOTH TYPE FROM LHS AND RHS ARE EQUAL
+        if (str(rhs) != str(lhs)):
+            raise TypeMismatchInExpression(ast.rhs)
+        
 
 
     # VISIT FUNCTION CALL STATEMENT
@@ -374,3 +385,4 @@ class StaticChecker(BaseVisitor, Utils):
 
     def visitArrayLiteral(self, ast:ArrayLiteral, param):
         print("Visit array literal: " + str(ast.value))
+        return ArrayType()
