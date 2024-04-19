@@ -8,9 +8,11 @@ class CheckerSuite(unittest.TestCase):
     def test_general(self):
         input = """
 
+func a()
+        
 func main()
-    begin
-        number a[5] <- [1,2]
+    begin   
+        number b
     end
 
 

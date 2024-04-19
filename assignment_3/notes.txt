@@ -73,6 +73,6 @@ WORKING PROGRESS: Declare stuffs
 				- Ở thời điểm hiện tại chỉ assume return type của một hàm dựa trên giá trị trả về của return statement. Tuy nhiên, phải chăng các statement khác cũng trả về một statement gì đó ?
 
 			- Làm thế nào để check value truyền vào param có đúng hay không ===> PASS FOR NOW
-			- Array xử lý như thế nào? Array bao gồm ArrayCell và  ArrayLiteral, ArrayType
+			- Array xử lý như thế nào? Array bao gồm ArrayCell và  ArrayLiteral, ArrayType ===> Skip for now
 
 

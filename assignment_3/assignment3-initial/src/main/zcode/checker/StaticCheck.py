@@ -21,7 +21,7 @@ class StaticChecker(BaseVisitor, Utils):
 
 
     def visitProgram(self, ast:Program, param):
-        param =[{'readNumber':None,'writeNumber':None,'readBool':None,'writeBool':None,'readString':None,'writeString':None}]
+        param =[{'readNumber':'VoidType','writeNumber':'VoidType','readBool':'VoidType','writeBool':'VoidType','readString':'VoidType','writeString':'VoidType'}]
         print(ast.decl)
 
         if ast.decl is None:
@@ -40,8 +40,8 @@ class StaticChecker(BaseVisitor, Utils):
 
     def visitVarDecl(self, ast:VarDecl, param):
         name = self.getIdName(ast.name,param)
-        print("Var decl is called: name("+str(name)+") type(" + str(ast.varType)+") - modifier(" + str(ast.modifier) +")")
-        varType = str(ast.varType) if ast.varType is not None else None
+        print("Var decl is called: name("+str(name)+") type(" + str(ast.varType)+")  modifier(" + str(ast.modifier) +") Init(" +str(ast.varInit)+")")
+        varType = str(ast.varType) if ast.varType is not None else VoidType()
         # varType = ast.varType
 
         modifier = ast.modifier
@@ -49,6 +49,12 @@ class StaticChecker(BaseVisitor, Utils):
 
         # CHECK FOR UNDECLARATION OF BOTH VAR AND FUNC
         exprType = (self.visit(ast.varInit,param)) if ast.varInit is not None else None
+        print("Init type = " + str(exprType))
+
+
+        # CHECK TYPE CANNOT BE INFERED IN CASE INITIALIZE VARIABLE WITH NON-TYPED VARIABLE
+        if ast.varInit is not None and str(exprType) == 'None':
+            raise TypeCannotBeInferred(ast)
 
 
         if name in param[0]:
@@ -65,7 +71,7 @@ class StaticChecker(BaseVisitor, Utils):
         # Declare primitive types => Variable type is varType
         else:
             if str(exprType) != str(ast.varType) and str(exprType) != 'None':
-                raise TypeMismatchInExpression(ast)
+                raise TypeMismatchInStatement(ast)
             else:
                 finalType = str(ast.varType)
 
@@ -115,11 +121,16 @@ class StaticChecker(BaseVisitor, Utils):
         #     self.visit(stmt,env)
 
         if (ast.body is None):
-            body = []
+            body = VoidType()
         else: 
             body = self.visit(ast.body,env)
 
+        if (body is None):
+            body = VoidType()
         # param[0] += {name:body}
+
+
+
         param[0][name] = str(body)
 
         print("Body of function if it returns something: " + str(body))
@@ -152,7 +163,7 @@ class StaticChecker(BaseVisitor, Utils):
 
         eleType = self.visit(ast.eleType,param)
 
-        return arrayType()
+        return eleType
 
     # VISIT BINARY OPERATORS
     def visitBinaryOp(self, ast:BinaryOp, param):
@@ -285,6 +296,9 @@ class StaticChecker(BaseVisitor, Utils):
         # CHECK UNDECLARED IDENTIFIER
         expr = self.visit(ast.expr,param)
 
+        if str(expr) != 'BoolType':
+            raise TypeMismatchInStatement(ast)
+
         # VISIT ALL STATEMENTS
         thenStmt = self.visit(ast.thenStmt,param)
         elifStmt_list = ast.elifStmt
@@ -311,6 +325,9 @@ class StaticChecker(BaseVisitor, Utils):
 
 
         condExpr = self.visit(ast.condExpr,env)
+        if str(condExpr) != 'BoolType':
+            raise TypeMismatchInStatement(ast)
+
         updExpr = self.visit(ast.updExpr,env)
         body = self.visit(ast.body,env)
 
@@ -346,6 +363,10 @@ class StaticChecker(BaseVisitor, Utils):
         lhs = self.visit(ast.lhs,param)
         print("Visit assign statement: ast: "+ str(ast)+" lhs = "+str(lhs) + " rhs = "+str(rhs))
 
+        if str(lhs) == 'None' or str(lhs) =='VoidType':
+            raise TypeMismatchInStatement(ast)
+
+
         # CHECK IF BOTH TYPE FROM LHS AND RHS ARE EQUAL
         if (str(rhs) != str(lhs)):
             raise TypeMismatchInExpression(ast.rhs)
@@ -365,10 +386,8 @@ class StaticChecker(BaseVisitor, Utils):
             self.visit(id,param)
 
         print("Call expr with name = " + str(name) +" expr = "+ str(args))
+        return VoidType()
         
-        
-
-
 
 
     def visitNumberLiteral(self, ast:NumberLiteral, param):
@@ -385,4 +404,4 @@ class StaticChecker(BaseVisitor, Utils):
 
     def visitArrayLiteral(self, ast:ArrayLiteral, param):
         print("Visit array literal: " + str(ast.value))
-        return ArrayType()
+        return 'ArrayType'
