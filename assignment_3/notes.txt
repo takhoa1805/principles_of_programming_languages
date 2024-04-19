@@ -59,7 +59,19 @@ WORKING PROGRESS: Declare stuffs
 
 		- Current problem:
 			- làm thế nào để xác định type của một hàm dựa trên return value ===> nhiều return statement với kiểu return khác nhau xử lý như thế nào?
+				- Cần xác định xem những statement nào sẽ trả về type. Hoặc sẽ trả về những giá trị nào. Các loại statement:
+					- Variable declaration ===> Có thể không cần trả về gì. Lưu type trong dict param đã tạo ra
+					- Assignment ===> Có thể không cần trả về gì.
+					- If ====> Trả về type nếu như trong if statement có tồn tại return statement
+					- For	===> Trả về type nếu như trong for statement có tồn tại return statement
+					- Break / Continue ===> Không cần trả về
+					- Return	===> Trả về type của expression 
+					- Function call ===> Không cần trả về gì. Tuy nhiên cần check kiểu argument truyền vào có đúng với parameter được define cho hàm đó hay không
+					- Block ===> Trả về type nếu như trong block statement có tồn tại return statemnet
+
+				- Ở thời điểm hiện tại chỉ assume return type của một hàm dựa trên giá trị trả về của return statement. Tuy nhiên, phải chăng các statement khác cũng trả về một statement gì đó ?
+
 			- Làm thế nào để check value truyền vào param có đúng hay không
-            - Array xử lý như thế nào
+			- Array xử lý như thế nào
 
 
