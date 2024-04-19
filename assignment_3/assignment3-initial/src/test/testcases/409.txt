@@ -3,6 +3,6 @@
 func main()
 begin
     number x <- 5
-    dynamic x <- (x - 2) * (x + true)
+    dynamic x <- (x - 2) * (x + 5)
 end
 

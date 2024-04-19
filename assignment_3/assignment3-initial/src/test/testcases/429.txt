@@ -1,7 +1,10 @@
 
-var f <- 10
+
+func f() 
+begin
+    return 5
+end
 func f()
-    return
 
 func main()
 begin

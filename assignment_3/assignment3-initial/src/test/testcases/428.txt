@@ -5,12 +5,11 @@ end
 
 func main()
 begin
-    dynamic n
+    number n
     var i <- 0
     number arr[10]
     for i until true by 1
     begin
-        n <- readNumber()
         if ((n > 10) or (n <= 0)) writeString("Try again")
         else break
     end
@@ -21,5 +20,4 @@ begin
     f(arr, n)
 end
 
-func f(number a[5], number n)
-    return
+func f(number a[5], number n) return

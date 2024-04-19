@@ -13,7 +13,7 @@ class StaticChecker(BaseVisitor, Utils):
     def __init__(self, ast: Program) -> None:
         self.ast = ast
         self.env =[[]]
-        self.funcParam =[[{}]]
+        self.func={}
 
     def check(self):
         self.visit(self.ast,self.env)
@@ -23,6 +23,7 @@ class StaticChecker(BaseVisitor, Utils):
     def visitProgram(self, ast:Program, param):
         param =[{'readNumber':'VoidType','writeNumber':'VoidType','readBool':'VoidType','writeBool':'VoidType','readString':'VoidType','writeString':'VoidType'}]
         print(ast.decl)
+
 
         if ast.decl is None:
             raise NoEntryPoint()
@@ -34,8 +35,14 @@ class StaticChecker(BaseVisitor, Utils):
             if 'main' not in ids:
                 raise NoEntryPoint()
 
+
+        # CHECK FOR UN-DEFINED FUNCTION
+        for id in self.func:
+            if self.func[id] is None:
+                raise NoDefinition(id)
         print("param after program: " + str(param))
-        # print(ast)
+        print("\n")
+        print("\n")
         
 
     def visitVarDecl(self, ast:VarDecl, param):
@@ -78,6 +85,8 @@ class StaticChecker(BaseVisitor, Utils):
         # param[0] += {name:str(varType)}
         param[0][name] = finalType
 
+
+
     def myVisitParameter(self,ast:VarDecl,param):
         print("Param decl is called")
         # varType = ast.varType
@@ -106,9 +115,13 @@ class StaticChecker(BaseVisitor, Utils):
 
         print("Name: " + str(name))
         print("Current scope: " + str(param[0]))
+        print("Current function scope: " + str(self.func.get('f')))
 
         if name in param[0]:
-            raise Redeclared('Function',name)
+            if (self.func.get(name) is not None) or (ast.body is None):
+                raise Redeclared('Function',name)
+            else:
+                param[0].pop(name)
         
         env = [{}] + param
 
@@ -132,6 +145,7 @@ class StaticChecker(BaseVisitor, Utils):
 
 
         param[0][name] = str(body)
+        self.func[name] = ast.body
 
         print("Body of function if it returns something: " + str(body))
         # print(self.funcType)
@@ -254,6 +268,9 @@ class StaticChecker(BaseVisitor, Utils):
         print("Identifier environment: "+str(param))
         for id in param:
             if (ast.name in id):
+                # print("FOUND: " +ast.name+" "+str(type(param) == list))
+                if type(id) == list:
+                    return None
                 return id[ast.name]
         raise Undeclared("Identifier",str(ast.name))
         

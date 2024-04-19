@@ -1,7 +1,7 @@
 
 func main()
     begin
-        for i until i by [1]
+        for i until true by 1
         begin
             number a <- 5
             number b <- 6
