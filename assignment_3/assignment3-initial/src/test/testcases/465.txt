@@ -1,0 +1,12 @@
+
+func f(number x)
+begin
+    return 1
+end
+    
+func main()
+begin
+    number a
+    number x <- f(a)
+    a <- 5
+end

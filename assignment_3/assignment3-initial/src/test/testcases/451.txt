@@ -1,6 +1,7 @@
 
 func main()
     begin
+        number i <- 5
         for i until true by 1
         begin
             number a <- 5

@@ -3,6 +3,8 @@ func f(number arr[10], number x)
 begin
 end
 
+func f(number a[5], number n) return
+
 func main()
 begin
     number n
@@ -20,4 +22,3 @@ begin
     f(arr, n)
 end
 
-func f(number a[5], number n) return

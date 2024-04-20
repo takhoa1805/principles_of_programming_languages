@@ -5,7 +5,8 @@ func f()
     end
 func main()
     begin
-        for i until i by [1]
+        number i
+        for i until i < 5 by [1]
         begin
             writeNumber(1)
             if (true) break

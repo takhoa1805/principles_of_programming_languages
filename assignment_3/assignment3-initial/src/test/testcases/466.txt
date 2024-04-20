@@ -1,0 +1,6 @@
+
+func main()
+begin
+    number x
+    x <- 1 + true
+end

@@ -1,0 +1,9 @@
+
+func main()
+begin
+    number i 
+    for i until i by i
+    begin
+        i <- 5
+    end
+end
