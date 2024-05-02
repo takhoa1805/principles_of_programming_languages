@@ -8,6 +8,8 @@
 from abc import ABC, abstractmethod, ABCMeta
 
 
+# THIS CAN BE MODIFIED
+
 class MachineCode(ABC):
     @abstractmethod
     def emitPUSHNULL(self):
