@@ -1,4 +1,7 @@
 from abc import ABC, abstractmethod, ABCMeta
+# from Visitor import Visitor
+from dataclasses import dataclass
+from typing import List, Tuple
 
 
 class AST(ABC):
