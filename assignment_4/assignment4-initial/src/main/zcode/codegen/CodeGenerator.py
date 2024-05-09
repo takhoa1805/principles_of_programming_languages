@@ -168,4 +168,79 @@ class CodeGenVisitor(BaseVisitor):
     def visitBinaryOp(self, ast, o):
         e1c, e1t = self.visit(ast.left, o)
         e2c, e2t = self.visit(ast.right, o)
-        return e1c + e2c + self.emit.emitADDOP(ast.op, e1t, o.frame), e1t
+
+        # INITIAL VALUE FOR NUMBERTYPE
+        returnType = VoidType()
+
+        if type(e1t) is type(e2t):
+            returnType = e1t
+
+        if ast.op in ["+","-","..."]:
+            code = self.emit.emitADDOP(ast.op,returnType,o.frame)
+        elif ast.op in ["*","/"]:
+            code = self.emit.emitMULOP(ast.op,returnType,o.frame)
+        elif ast.op in ["%"]:
+            code = self.emit.emitMOD(o.frame)
+        elif ast.op in ["and"]:
+            code = self.emit.emitANDOP(o.frame)
+        elif ast.op in ["or"]:
+            code = self.emit.emitOROP(o.frame)
+        else:
+            code = self.emit.emitREOP(ast.op,returnType,o.frame)
+
+        return e1c + e2c + code, returnType
+    
+
+    def visitId(self,ast,o):
+        sym = next(filter(lambda x: x.name == ast.name,o.sym),False)
+        if o.isLeft:
+            if type(sym.value) is Index:
+                code = self.emit.emitWRITEVAR(sym.name,sym.mtype,sym.value.value,o.frame)
+                code = self.emit.emitPUTSTATIC(sym.value.value+"."+sym.name,sym.mtype,o.frame)
+        else:
+            if type(sym.value) is Index:
+                code = self.emit.emitREADVAR(sym.name,sym.mtype,sym.value.value,o.frame)
+            else:
+                code = self.emit.emitGETSTATIC(sym.value.value+"."+sym.name,sym.mtype,o.frame)
+        
+        return code,sym.mtype
+
+    def visitVarDecl(self,ast,o):
+        if o.frame is None:
+            code = self.emit.emitATTRIBUTE(ast.name,ast.typ,False)
+            self.emit.printout(code)
+            return Symbol(ast.name,ast.typ,CName(self.className))
+        else:
+            idx = o.frame.getNewIndex()
+            code = self.emit.emitVAR(idx,ast.name,ast.typ,o.frame.getStartLabel(),o.frame.getEndLabel())
+            self.emit.printout(code)
+            return Symbol(ast.name,ast.typ,Index(idx))
+        
+
+    def visitAssign(self,ast,o):
+        rc,rt = self.visit(ast.rhs,Access(o.frame,o.sym,False))
+        self.emit.printout(rc)
+
+        lc,lt = self.visit(ast.lhs,Access(o.frame,o.sym,True))
+        self.emit.printout(lc)
+
+    def visitIf(self,ast,o):
+        if ast.elseStmt is None:
+            falseL = o.frame.getNewLabel()
+            code,typ = self.visit(ast.expr,Access(o.frame,o.sym,False))
+            self.emit.printout(code)
+            self.emit.printout(self.emit.emitIFFALSE(falseL,o.frame))
+            self.visit(ast.thenStmt,o)
+            self.emit.printout(self.emit.emitLABEL(falseL,o.frame))
+
+        else:
+            falseL = o.frame.getNewLabel()
+            nextL = o.frame.getNewLabel()
+            code,typ = self.visit(ast.expr,Access(o.frame,o.sym,False))
+            self.emit.printout(code)
+            self.emit.printout(self.emit.emitIFFALSE(falseL,o.frame))
+            self.visit(ast.thenStmt,o)
+            self.emit.printout(self.emit.emitGOTO(nextL,o.frame))
+            self.emit.printout(self.emit.emitLABEL(falseL,o.frame))
+            self.visit(ast.elseStmt,o)
+            self.emit.printout(self.emit.emitLABEL(nextL,o.frame))

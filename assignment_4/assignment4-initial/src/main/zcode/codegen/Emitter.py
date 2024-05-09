@@ -347,15 +347,9 @@ class Emitter():
 
         frame.pop()
         if lexeme == "+":
-            if type(in_) is NumberType:
-                return self.jvm.emitIADD()
-            else:
-                return self.jvm.emitFADD()
+            return self.jvm.emitFADD()
         else:
-            if type(in_) is NumberType:
-                return self.jvm.emitISUB()
-            else:
-                return self.jvm.emitFSUB()
+            return self.jvm.emitFSUB()
 
     '''
     *   generate imul, idiv, fmul or fdiv.
@@ -371,15 +365,9 @@ class Emitter():
 
         frame.pop()
         if lexeme == "*":
-            if type(in_) is NumberType:
-                return self.jvm.emitIMUL()
-            else:
-                return self.jvm.emitFMUL()
+            return self.jvm.emitFMUL()
         else:
-            if type(in_) is NumberType:
-                return self.jvm.emitIDIV()
-            else:
-                return self.jvm.emitFDIV()
+            return self.jvm.emitFDIV()
 
     def emitDIV(self, frame):
         # frame: Frame
