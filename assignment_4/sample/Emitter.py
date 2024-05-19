@@ -5,7 +5,9 @@ import CodeGenerator as cgen
 from MachineCode import JasminCode
 from AST import *
 
-# TODO
+# from CodeGenError import *
+# from ..utils.AST import *
+
 
 class Emitter():
     def __init__(self, filename):
@@ -147,6 +149,40 @@ class Emitter():
     *   @param toLabel the ending label  of the scope where the variable is active.
     '''
 
+    def emitNEWARRAY(self, in_, frame):
+        # in_: Type
+        # frame: Frame
+        # ..., count -> ..., arrayref
+
+        frame.pop()
+        if type(in_) is NumberType:
+            return self.jvm.emitNEWARRAY("float")
+        elif type(in_) is BoolType:
+            return self.jvm.emitNEWARRAY("boolean")
+        elif type(in_) is StringType:
+            return self.jvm.emitANEWARRAY("java/lang/String")
+        else:
+            raise IllegalOperandException(str(in_))
+        
+    def emitANEWARRAY(self, in_, frame):
+        # in_: Type
+        # frame: Frame
+        # ..., count -> ..., arrayref
+
+        frame.pop()
+        return self.jvm.emitANEWARRAY(in_)
+
+    def emitMULTIANEWARRAY(self, in_, dim, frame):
+        # in_: Type
+        # dim: Int
+        # frame: Frame
+        # ..., count1, count2, ..., countDim -> ..., arrayref
+
+        for i in range(dim):
+            frame.pop()
+        return self.jvm.emitMULTIANEWARRAY(in_, dim)
+
+
     def emitVAR(self, in_, varName, inType, fromLabel, toLabel, frame):
         # in_: Int
         # varName: String
@@ -239,7 +275,7 @@ class Emitter():
         # isFinal: Boolean
         # value: String
 
-        return self.jvm.emitSTATICFIELD(lexeme, self.getJVMType(in_), false)
+        return self.jvm.emitSTATICFIELD(lexeme, self.getJVMType(in_), False)
 
     def emitGETSTATIC(self, lexeme, in_, frame):
         # lexeme: String
@@ -337,10 +373,7 @@ class Emitter():
         # frame: Frame
         # ..., value -> ..., result
 
-        if type(in_) is NumberType:
-            return self.jvm.emitINEG()
-        else:
-            return self.jvm.emitFNEG()
+        return self.jvm.emitFNEG()
 
     def emitNOT(self, in_, frame):
         # in_: Type
@@ -358,7 +391,7 @@ class Emitter():
         return ''.join(result)
 
     '''
-    *   generate iadd, isub, fadd or fsub.
+    *   generate fadd or fsub.
     *   @param lexeme the lexeme of the operator.
     *   @param in the type of the operands.
     '''
@@ -393,17 +426,17 @@ class Emitter():
         else:
             return self.jvm.emitFDIV()
 
-    def emitDIV(self, frame):
-        # frame: Frame
+    # def emitDIV(self, frame):
+    #     # frame: Frame
 
-        frame.pop()
-        return self.jvm.emitIDIV()
+    #     frame.pop()
+    #     return self.jvm.emitIDIV()
 
     def emitMOD(self, frame):
         # frame: Frame
 
         frame.pop()
-        return self.jvm.emitIREM()
+        return self.jvm.emitFREM()
 
     '''
     *   generate iand
@@ -479,8 +512,10 @@ class Emitter():
         frame.pop()
         frame.pop()
         if op == ">":
-            result.append(self.jvm.emitIFICMPLE(falseLabel))
-            result.append(self.emitGOTO(trueLabel))
+            result.append(self.jvm.emitFCMPL())
+            
+            # result.append(self.jvm.emitIFICMPLE(falseLabel))
+            # result.append(self.emitGOTO(trueLabel))
         elif op == ">=":
             result.append(self.jvm.emitIFICMPLT(falseLabel))
         elif op == "<":
@@ -608,13 +643,24 @@ class Emitter():
     *   @param in the type of the returned expression.
     '''
 
+    def emitF2I(self, frame):
+        # frame: Frame
+
+        return self.jvm.emitF2I()
+
     def emitRETURN(self, in_, frame):
         # in_: Type
         # frame: Frame
 
         if type(in_) is NumberType:
             frame.pop()
+            return self.jvm.emitFRETURN()
+        elif type(in_) is BoolType:
+            frame.pop()
             return self.jvm.emitIRETURN()
+        elif type(in_) is StringType:
+            frame.pop()
+            return self.jvm.emitARETURN()
         elif type(in_) is VoidType:
             return self.jvm.emitRETURN()
 
